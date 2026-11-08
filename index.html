@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arvskalkylator | Svensk Arvsrätt (Ärvdabalken) — By Alfred Stengard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Merriweather for Scandinavian Legal-Tech feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Merriweather', 'Georgia', 'serif'],
+                    },
+                    colors: {
+                        nordic: {
+                            50: '#f4f6f8',
+                            100: '#e4e9ee',
+                            200: '#cbd5e1',
+                            700: '#1e3a5f',
+                            800: '#152943',
+                            900: '#0d1b2e',
+                        },
+                        gold: {
+                            50: '#fbf8f1',
+                            100: '#f5eedc',
+                            500: '#c59b27',
+                            600: '#a8811c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .legal-serif {
+            font-family: 'Merriweather', Georgia, serif;
+        }
+        /* Print styles for saving calculation as PDF */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-full {
+                width: 100% !important;
+                max-width: 100% !important;
+                grid-column: span 12 / span 12 !important;
+            }
+            body {
+                background-color: #ffffff;
+            }
+            .shadow-sm, .shadow-md, .shadow-lg {
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+        }
+        /* Smooth transitions */
+        .transition-all-smooth {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-nordic-700 selection:text-white">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-nordic-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gold-500/20 border border-gold-500/40 p-2 rounded-lg text-gold-500">
+                    <i data-lucide="scale" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white" data-i18n="appTitle">Svensk Arvskalkylator</h1>
+                        <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-nordic-700 text-slate-200 border border-slate-600">
+                            SFS 1958:637
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-300 font-medium">By Alfred Stengard</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 no-print">
+                <!-- Verified by Lawyer Pill in Header -->
+                <div class="hidden md:flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-700/60 text-emerald-200 px-3 py-1.5 rounded-full text-xs font-medium">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                    <span data-i18n="headerVerifiedBadge">Kod & logik kontrollerad av jurist</span>
+                </div>
+
+                <!-- Print / PDF Button -->
+                <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors" title="Skriv ut eller spara som PDF">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline" data-i18n="printBtn">Skriv ut / PDF</span>
+                </button>
+
+                <!-- Language Switcher -->
+                <button id="langToggleBtn" onclick="toggleLanguage()" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gold-500 hover:bg-gold-600 text-slate-950 transition-colors shadow-sm cursor-pointer">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                    <span id="langToggleText">English (EN)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- TRUST & PRIVACY BANNER -->
+    <div class="bg-white border-b border-slate-200 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
+                <!-- Legal Verification Notice -->
+                <div class="flex items-start sm:items-center gap-2.5 text-xs sm:text-sm text-slate-700">
+                    <div class="p-1.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 mt-0.5 sm:mt-0">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-slate-900" data-i18n="verifiedTitle">Juridiskt kvalitetssäkrad:</span>
+                        <span data-i18n="verifiedDesc">Uträkningen och den underliggande programkoden är granskad och kontrollerad av jurist utifrån Ärvdabalken (1958:637).</span>
+                    </div>
+                </div>
+
+                <!-- Privacy / Local Browser Calculation Disclaimer -->
+                <div class="flex items-start sm:items-center gap-2.5 text-xs sm:text-sm text-slate-700 md:justify-end">
+                    <div class="p-1.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 shrink-0 mt-0.5 sm:mt-0">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-slate-900" data-i18n="privacyTitle">100 % lokal beräkning:</span>
+                        <span data-i18n="privacyDesc">Ingen information skickas någonsin över internet. Allt beräknas direkt i webbläsaren på din egen enhet.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+        <!-- INTRO & PRESET SCENARIOS -->
+        <section class="mb-8 no-print">
+            <div class="bg-gradient-to-r from-nordic-900 via-nordic-800 to-nordic-700 rounded-2xl p-5 sm:p-6 text-white shadow-md">
+                <div class="max-w-3xl">
+                    <h2 class="text-xl sm:text-2xl font-bold legal-serif mb-2" data-i18n="heroHeading">Hur fördelas arvet enligt svensk lag?</h2>
+                    <p class="text-slate-200 text-sm sm:text-base leading-relaxed mb-5" data-i18n="heroSub">
+                        Detta verktyg hjälper dig som inte är jurist att enkelt räkna ut exakt hur ett arv fördelas enligt Ärvdabalken. Verktyget tar hänsyn till efterlevande make, särkullbarn, prisbasbeloppsregeln, förskott på arv, samt testamente och laglott.
+                    </p>
+                </div>
+
+                <!-- Quick Preset Buttons -->
+                <div>
+                    <p class="text-xs uppercase tracking-wider text-gold-500 font-semibold mb-2.5 flex items-center gap-1.5">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span data-i18n="presetsLabel">Testa ett färdigt typfall (klicka för att fylla i):</span>
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="loadScenario('married_joint')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-white border border-white/15 transition cursor-pointer flex items-center gap-1.5">
+                            <i data-lucide="users" class="w-3.5 h-3.5 text-gold-500"></i>
+                            <span data-i18n="preset1">Gift par med 2 gemensamma barn</span>
+                        </button>
+                        <button onclick="loadScenario('married_sarkull')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-white border border-white/15 transition cursor-pointer flex items-center gap-1.5">
+                            <i data-lucide="git-branch" class="w-3.5 h-3.5 text-gold-500"></i>
+                            <span data-i18n="preset2">Gift med särkullbarn + gemensamt barn</span>
+                        </button>
+                        <button onclick="loadScenario('sambo_will')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-white border border-white/15 transition cursor-pointer flex items-center gap-1.5">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-gold-500"></i>
+                            <span data-i18n="preset3">Sambo med barn & testamente (Laglott)</span>
+                        </button>
+                        <button onclick="loadScenario('single_siblings')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-white border border-white/15 transition cursor-pointer flex items-center gap-1.5">
+                            <i data-lucide="network" class="w-3.5 h-3.5 text-gold-500"></i>
+                            <span data-i18n="preset4">Ensamstående utan barn (Föräldrar/Syskon)</span>
+                        </button>
+                        <button onclick="loadScenario('basbelopp_rule')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-white border border-white/15 transition cursor-pointer flex items-center gap-1.5">
+                            <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-gold-500"></i>
+                            <span data-i18n="preset5">Litet bo med särkullbarn (Basbeloppsregeln)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN WORKSPACE GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- LEFT COLUMN: INPUT STEPS (7 cols on large screens) -->
+            <div class="lg:col-span-7 space-y-6 no-print">
+
+                <!-- STEP 1: CIVIL STATUS & ESTATE VALUE -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-full bg-nordic-800 text-white font-bold text-xs flex items-center justify-center">1</span>
+                            <h3 class="font-bold text-slate-900 text-base sm:text-lg" data-i18n="step1Title">Kvarlåtenskap & Civilstånd</h3>
+                        </div>
+                        <span class="text-xs font-medium text-slate-500 bg-slate-200/70 px-2.5 py-1 rounded-md">1 & 3 kap. ÄB</span>
+                    </div>
+
+                    <div class="p-6 space-y-6">
+                        <!-- Civil Status Radio Cards -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-800 mb-2.5" data-i18n="maritalStatusLabel">Den avlidnes civilstånd vid dödsfallet</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <!-- Single -->
+                                <button type="button" onclick="setMaritalStatus('single')" id="statusBtn_single" class="status-card flex flex-col items-start p-3.5 rounded-xl border-2 text-left transition cursor-pointer">
+                                    <div class="flex items-center justify-between w-full mb-1">
+                                        <span class="font-semibold text-sm" data-i18n="statusSingle">Ogift / Ensamstående</span>
+                                        <i data-lucide="user" class="w-4 h-4 text-slate-400"></i>
+                                    </div>
+                                    <span class="text-xs text-slate-500" data-i18n="statusSingleSub">Även änka/änkling eller skild</span>
+                                </button>
+
+                                <!-- Married -->
+                                <button type="button" onclick="setMaritalStatus('married')" id="statusBtn_married" class="status-card flex flex-col items-start p-3.5 rounded-xl border-2 text-left transition cursor-pointer">
+                                    <div class="flex items-center justify-between w-full mb-1">
+                                        <span class="font-semibold text-sm" data-i18n="statusMarried">Gift</span>
+                                        <i data-lucide="heart-handshake" class="w-4 h-4 text-slate-400"></i>
+                                    </div>
+                                    <span class="text-xs text-slate-500" data-i18n="statusMarriedSub">Make/maka ärver enligt 3 kap. ÄB</span>
+                                </button>
+
+                                <!-- Sambo -->
+                                <button type="button" onclick="setMaritalStatus('sambo')" id="statusBtn_sambo" class="status-card flex flex-col items-start p-3.5 rounded-xl border-2 text-left transition cursor-pointer">
+                                    <div class="flex items-center justify-between w-full mb-1">
+                                        <span class="font-semibold text-sm" data-i18n="statusSambo">Sambo</span>
+                                        <i data-lucide="home" class="w-4 h-4 text-slate-400"></i>
+                                    </div>
+                                    <span class="text-xs text-slate-500" data-i18n="statusSamboSub">Ärver ej utan testamente</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sambo Warning Box -->
+                        <div id="samboNotice" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs sm:text-sm text-amber-900 flex gap-3">
+                            <i data-lucide="info" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold mb-1" data-i18n="samboAlertTitle">Viktigt om sambor (Sambolagen & Ärvdabalken)</p>
+                                <p data-i18n="samboAlertDesc">Sambor ärver inte varandra enligt lag, oavsett om man har gemensamma barn eller hur länge man bott ihop. För att en sambo ska ärva krävs ett <strong>testamente</strong> (vilket du kan lägga till i Steg 3 nedan).</p>
+                            </div>
+                        </div>
+
+                        <!-- Net Estate Value Input -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="estateValueInput" class="block text-sm font-semibold text-slate-800 mb-1" data-i18n="estateValueLabel">
+                                    Den avlidnes kvarlåtenskap (SEK)
+                                </label>
+                                <p class="text-xs text-slate-500 mb-2" data-i18n="estateValueHelp">Nettotillgångar efter skulder (och eventuell bodelning).</p>
+                                <div class="relative">
+                                    <input type="number" id="estateValueInput" value="1200000" min="0" step="10000" oninput="recalculate()"
+                                        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-14 text-slate-900 font-semibold focus:border-nordic-700 focus:ring-2 focus:ring-nordic-700/20 outline-none transition">
+                                    <span class="absolute right-4 top-2.5 text-slate-400 font-medium text-sm">kr</span>
+                                </div>
+                            </div>
+
+                            <!-- Married Only: Spouse's property after bodelning & Prisbasbelopp -->
+                            <div id="spousePropertyBox" class="hidden">
+                                <label for="spousePropertyInput" class="block text-sm font-semibold text-slate-800 mb-1" data-i18n="spousePropertyLabel">
+                                    Efterlevande makes egendom (SEK)
+                                </label>
+                                <p class="text-xs text-slate-500 mb-2" data-i18n="spousePropertyHelp">Från bodelning + enskild egendom (för basbeloppsregeln).</p>
+                                <div class="relative">
+                                    <input type="number" id="spousePropertyInput" value="1200000" min="0" step="10000" oninput="recalculate()"
+                                        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-14 text-slate-900 font-semibold focus:border-nordic-700 focus:ring-2 focus:ring-nordic-700/20 outline-none transition">
+                                    <span class="absolute right-4 top-2.5 text-slate-400 font-medium text-sm">kr</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Married Only: Basbeloppsregeln expandable config -->
+                        <div id="basbeloppConfigBox" class="hidden pt-2 border-t border-slate-100">
+                            <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="shield" class="w-4 h-4 text-nordic-700 shrink-0"></i>
+                                    <span data-i18n="pbbExplanation"><strong>Basbeloppsregeln (3 kap. 1 § 2 st. ÄB):</strong> Efterlevande make har alltid rätt att få ut så mycket ur boet att totalen (inkl. egen del) uppgår till minst 4 prisbasbelopp.</span>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <label for="pbbInput" class="font-medium text-slate-700" data-i18n="pbbInputLabel">Prisbasbelopp:</label>
+                                    <input type="number" id="pbbInput" value="59200" min="10000" step="100" oninput="recalculate()"
+                                        class="w-24 rounded-lg border border-slate-300 px-2 py-1 text-right font-semibold text-slate-800 bg-white">
+                                    <span>kr</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: HEIRS & FAMILY TREE -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-full bg-nordic-800 text-white font-bold text-xs flex items-center justify-center">2</span>
+                            <h3 class="font-bold text-slate-900 text-base sm:text-lg" data-i18n="step2Title">Arvingar & Familjesituation</h3>
+                        </div>
+                        <span class="text-xs font-medium text-slate-500 bg-slate-200/70 px-2.5 py-1 rounded-md">2 & 6 kap. ÄB</span>
+                    </div>
+
+                    <div class="p-6 space-y-6">
+                        <!-- 1ST INHERITANCE CLASS: CHILDREN (BRÖSTARVINGAR) -->
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                        <span data-i18n="class1Title">Första arvsklassen: Barn (Bröstarvingar)</span>
+                                        <span class="text-xs font-normal text-slate-500">(2 kap. 1 § ÄB)</span>
+                                    </h4>
+                                    <p class="text-xs text-slate-500" data-i18n="class1Sub">Biologiska och adopterade barn till den avlidne. Om ett barn är avlidet träder barnbarn i dess ställe.</p>
+                                </div>
+                                <button type="button" onclick="addChild()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-nordic-800 hover:bg-nordic-700 text-white transition shadow-xs cursor-pointer">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span data-i18n="addChildBtn">Lägg till barn</span>
+                                </button>
+                            </div>
+
+                            <!-- Children List Container -->
+                            <div id="childrenListContainer" class="space-y-3">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                        </div>
+
+                        <!-- 2ND INHERITANCE CLASS: PARENTS & SIBLINGS (Shown only when 0 active children/grandchildren) -->
+                        <div id="secondClassSection" class="hidden pt-6 border-t border-slate-200 space-y-5">
+                            <div class="bg-blue-50/70 border border-blue-200/80 rounded-xl p-3.5 text-xs text-slate-700 flex items-center gap-2.5">
+                                <i data-lucide="corner-down-right" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                                <span data-i18n="class2TriggerNote">Eftersom det inte finns några bröstarvingar (barn eller barnbarn) går arvet vidare till <strong>andra arvsklassen</strong> (föräldrar och syskon enligt 2 kap. 2 § ÄB).</span>
+                            </div>
+
+                            <h4 class="text-sm font-bold text-slate-900" data-i18n="class2Title">Andra arvsklassen: Föräldrar & Syskon (2 kap. 2 § ÄB)</h4>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Mother's side -->
+                                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-semibold text-sm text-slate-800" data-i18n="motherLabel">Den avlidnes Mor</span>
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="motherAliveCheck" checked onchange="recalculate()" class="sr-only peer">
+                                            <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all relative peer-checked:bg-emerald-600"></div>
+                                            <span class="ml-2 text-xs font-medium text-slate-700" data-i18n="aliveToggle">I livet</span>
+                                        </label>
+                                    </div>
+                                    <div id="maternalHalfSiblingsBox" class="pt-2 border-t border-slate-200/80">
+                                        <label class="block text-xs font-medium text-slate-600 mb-1" data-i18n="maternalHalfSibsLabel">Halvsyskon på mors sida (aktiva grenar)</label>
+                                        <input type="number" id="maternalHalfSibsInput" value="0" min="0" max="20" oninput="recalculate()" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold">
+                                    </div>
+                                </div>
+
+                                <!-- Father's side -->
+                                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-semibold text-sm text-slate-800" data-i18n="fatherLabel">Den avlidnes Far</span>
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="fatherAliveCheck" checked onchange="recalculate()" class="sr-only peer">
+                                            <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all relative peer-checked:bg-emerald-600"></div>
+                                            <span class="ml-2 text-xs font-medium text-slate-700" data-i18n="aliveToggle">I livet</span>
+                                        </label>
+                                    </div>
+                                    <div id="paternalHalfSiblingsBox" class="pt-2 border-t border-slate-200/80">
+                                        <label class="block text-xs font-medium text-slate-600 mb-1" data-i18n="paternalHalfSibsLabel">Halvsyskon på fars sida (aktiva grenar)</label>
+                                        <input type="number" id="paternalHalfSibsInput" value="0" min="0" max="20" oninput="recalculate()" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Full Siblings -->
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+                                <label class="block text-sm font-semibold text-slate-800 mb-1" data-i18n="fullSiblingsLabel">Antal helsyskon (eller avlidna helsyskon med egna barn)</label>
+                                <p class="text-xs text-slate-500 mb-2" data-i18n="fullSiblingsHelp">Om en förälder är avliden delar syskonen på den förälderns halva. Om ett syskon är avlidet träder syskonbarn i dess ställe.</p>
+                                <input type="number" id="fullSiblingsInput" value="0" min="0" max="20" oninput="recalculate()" class="w-full sm:w-48 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold">
+                            </div>
+                        </div>
+
+                        <!-- 3RD INHERITANCE CLASS: GRANDPARENTS, AUNTS & UNCLES (Shown only when 1st and 2nd class are empty) -->
+                        <div id="thirdClassSection" class="hidden pt-6 border-t border-slate-200 space-y-5">
+                            <div class="bg-purple-50/70 border border-purple-200/80 rounded-xl p-3.5 text-xs text-slate-700 flex items-center gap-2.5">
+                                <i data-lucide="corner-down-right" class="w-4 h-4 text-purple-600 shrink-0"></i>
+                                <span data-i18n="class3TriggerNote">När varken barn, föräldrar, syskon eller syskonbarn finns i livet går arvet till <strong>tredje arvsklassen</strong> (mor- och farföräldrar samt mostrar/morbröder/fastrar/farbröder enligt 2 kap. 3 § ÄB). <em>Observera att kusiner inte ärver enligt lag (2 kap. 4 § ÄB).</em></span>
+                            </div>
+
+                            <h4 class="text-sm font-bold text-slate-900" data-i18n="class3Title">Tredje arvsklassen: Mor- & Farföräldrar (2 kap. 3 § ÄB)</h4>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Maternal Grandparents -->
+                                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                                    <h5 class="font-semibold text-sm text-slate-800" data-i18n="maternalGPTitle">Mors sida (Mormor & Morfar)</h5>
+                                    <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                        <input type="checkbox" id="mormorAlive" onchange="recalculate()" class="rounded text-nordic-800">
+                                        <span data-i18n="mormorLabel">Mormor i livet</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                        <input type="checkbox" id="morfarAlive" onchange="recalculate()" class="rounded text-nordic-800">
+                                        <span data-i18n="morfarLabel">Morfar i livet</span>
+                                    </label>
+                                    <div class="pt-2 border-t border-slate-200">
+                                        <label class="block text-xs text-slate-600 mb-1" data-i18n="maternalAuntsUnclesLabel">Mostrar / Morbröder i livet (antal)</label>
+                                        <input type="number" id="maternalAuntsInput" value="0" min="0" max="20" oninput="recalculate()" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-sm font-semibold">
+                                    </div>
+                                </div>
+
+                                <!-- Paternal Grandparents -->
+                                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                                    <h5 class="font-semibold text-sm text-slate-800" data-i18n="paternalGPTitle">Fars sida (Farmor & Farfar)</h5>
+                                    <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                        <input type="checkbox" id="farmorAlive" onchange="recalculate()" class="rounded text-nordic-800">
+                                        <span data-i18n="farmorLabel">Farmor i livet</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                        <input type="checkbox" id="farfarAlive" onchange="recalculate()" class="rounded text-nordic-800">
+                                        <span data-i18n="farfarLabel">Farfar i livet</span>
+                                    </label>
+                                    <div class="pt-2 border-t border-slate-200">
+                                        <label class="block text-xs text-slate-600 mb-1" data-i18n="paternalAuntsUnclesLabel">Fastrar / Farbröder i livet (antal)</label>
+                                        <input type="number" id="paternalAuntsInput" value="0" min="0" max="20" oninput="recalculate()" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-sm font-semibold">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- STEP 3: WILL & STATUTORY SHARE (TESTAMENTE & LAGLOTT) -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-full bg-nordic-800 text-white font-bold text-xs flex items-center justify-center">3</span>
+                            <h3 class="font-bold text-slate-900 text-base sm:text-lg" data-i18n="step3Title">Testamente & Laglott</h3>
+                        </div>
+                        <span class="text-xs font-medium text-slate-500 bg-slate-200/70 px-2.5 py-1 rounded-md">7, 9–11 kap. ÄB</span>
+                    </div>
+
+                    <div class="p-6 space-y-5">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <label for="hasWillToggle" class="font-semibold text-sm text-slate-900 block cursor-pointer" data-i18n="hasWillLabel">Finns det ett giltigt testamente?</label>
+                                <p class="text-xs text-slate-500" data-i18n="hasWillSub">Genom testamente kan arvlåtaren ändra fördelningen, med förbehåll för bröstarvingars laglott och makes basbeloppsskydd.</p>
+                            </div>
+                            <label class="inline-flex items-center cursor-pointer shrink-0">
+                                <input type="checkbox" id="hasWillToggle" onchange="toggleWillSection()" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all relative peer-checked:bg-nordic-800"></div>
+                            </label>
+                        </div>
+
+                        <div id="willDetailsSection" class="hidden pt-4 border-t border-slate-200 space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="willBeneficiaryLabel">Mottagare i testamentet (Namn/Roll)</label>
+                                    <input type="text" id="willBeneficiaryName" value="Sambo / Valbar mottagare" oninput="recalculate()"
+                                        class="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-900">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="willLegatLabel">Specifikt penninglegat (11 kap. 2 § ÄB, SEK)</label>
+                                    <div class="relative">
+                                        <input type="number" id="willLegatAmount" value="0" min="0" step="5000" oninput="recalculate()"
+                                            class="w-full rounded-xl border border-slate-300 px-3.5 py-2 pr-10 text-sm font-semibold text-slate-900">
+                                        <span class="absolute right-3 top-2 text-slate-400 text-xs">kr</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                    <span data-i18n="willShareLabel">Universellt förordnande (% av återstående kvarlåtenskap)</span>
+                                    <span id="willPercentDisplay" class="text-nordic-800 font-bold">100 %</span>
+                                </div>
+                                <input type="range" id="willUniversalPercent" min="0" max="100" step="5" value="100" oninput="document.getElementById('willPercentDisplay').innerText = this.value + ' %'; recalculate();"
+                                    class="w-full accent-nordic-800 cursor-pointer">
+                                <div class="flex justify-between text-[11px] text-slate-400">
+                                    <span>0 %</span>
+                                    <span data-i18n="willHalfHint">50 % (t.ex. halva boet)</span>
+                                    <span data-i18n="willAllHint">100 % (hela boet)</span>
+                                </div>
+                            </div>
+
+                            <!-- Laglott protection checkbox -->
+                            <div class="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 flex items-start gap-3">
+                                <input type="checkbox" id="claimLaglottCheck" checked onchange="recalculate()" class="mt-1 rounded text-nordic-800 focus:ring-nordic-700 cursor-pointer">
+                                <label for="claimLaglottCheck" class="text-xs text-slate-800 cursor-pointer leading-relaxed">
+                                    <strong class="text-slate-900 block mb-0.5" data-i18n="claimLaglottTitle">Bröstarvingar begär jämkning för att få ut sin laglott (7 kap. 1 & 3 §§ ÄB)</strong>
+                                    <span data-i18n="claimLaglottDesc">En bröstarvinge har alltid rätt till sin <em>laglott</em>, vilket är hälften (50 %) av den arvslott barnet skulle ha fått om inget testamente fanns.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: RESULTS & LEGAL EXPLANATION (5 cols on large screens, sticky) -->
+            <div class="lg:col-span-5 print-full space-y-6">
+
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden sticky top-20">
+                    <!-- Result Header -->
+                    <div class="bg-nordic-900 text-white p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs uppercase tracking-wider font-semibold text-gold-500" data-i18n="resultBadge">Resultat & Fördelning</span>
+                            <span class="text-xs text-slate-300 flex items-center gap-1">
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                <span data-i18n="deterministicTag">Deterministisk beräkning</span>
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-bold legal-serif" data-i18n="resultHeading">Fördelning av kvarlåtenskap</h3>
+                        <div class="mt-4 pt-4 border-t border-white/10 flex items-baseline justify-between">
+                            <span class="text-xs text-slate-300" data-i18n="totalEstateSummaryLabel">Kvarlåtenskap att fördela:</span>
+                            <span id="summaryTotalEstate" class="text-2xl font-bold text-white">1 200 000 kr</span>
+                        </div>
+                    </div>
+
+                    <div class="p-6 space-y-6">
+                        <!-- Visual Stacked Distribution Bar -->
+                        <div>
+                            <div class="flex justify-between items-center text-xs font-semibold text-slate-600 mb-2">
+                                <span data-i18n="visualSplitLabel">Visuell fördelning vid dödsfallet</span>
+                                <span id="activeRuleBadge" class="text-nordic-800 bg-nordic-50 px-2 py-0.5 rounded border border-nordic-200">3 kap. 1 § ÄB</span>
+                            </div>
+                            <div id="distributionBar" class="w-full h-5 rounded-full bg-slate-100 overflow-hidden flex border border-slate-200 p-0.5 gap-0.5">
+                                <!-- Segments injected by JS -->
+                            </div>
+                            <div id="distributionLegend" class="flex flex-wrap gap-3 mt-2.5 text-xs text-slate-600">
+                                <!-- Legend injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Key Legal Outcome Summary Box -->
+                        <div id="plainLanguageSummary" class="p-4 rounded-xl bg-nordic-50 border border-nordic-200 text-xs sm:text-sm text-slate-800 leading-relaxed space-y-2">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <!-- Detailed Beneficiary Cards -->
+                        <div>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3" data-i18n="beneficiariesListHeader">Mottagare & Juridisk grund</h4>
+                            <div id="beneficiariesContainer" class="space-y-3">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Efterarv (Delayed Inheritance under 3 kap. 2 § ÄB) Section -->
+                        <div id="efterarvSection" class="hidden pt-4 border-t border-slate-200">
+                            <div class="bg-slate-900 text-white rounded-xl p-4 space-y-2.5">
+                                <div class="flex items-center gap-2 text-gold-500 font-semibold text-xs uppercase tracking-wider">
+                                    <i data-lucide="clock" class="w-4 h-4"></i>
+                                    <span data-i18n="efterarvHeader">Rätt till Efterarv (3 kap. 2 § ÄB)</span>
+                                </div>
+                                <p id="efterarvExplanation" class="text-xs text-slate-300 leading-relaxed">
+                                    <!-- Injected by JS -->
+                                </p>
+                                <div id="efterarvList" class="space-y-1.5 pt-2 border-t border-slate-700 text-xs">
+                                    <!-- Injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legal Verification & Privacy Footer inside Card -->
+                        <div class="pt-4 border-t border-slate-200 flex flex-col gap-2 text-[11px] text-slate-500">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="award" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                                <span data-i18n="cardFooterLegal">Beräkningslogiken och koden är kontrollerad av jurist mot Ärvdabalken (1958:637).</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="cpu" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                                <span data-i18n="cardFooterPrivacy">Uträkningen sker 100 % lokalt på din dator – ingen data skickas över internet.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- EDUCATIONAL GUIDE FOR NON-LAWYERS -->
+        <section class="mt-12 pt-8 border-t border-slate-200">
+            <div class="max-w-3xl mb-6">
+                <h2 class="text-lg sm:text-xl font-bold text-slate-900 legal-serif mb-1" data-i18n="eduTitle">Kort ordlista för icke-jurister</h2>
+                <p class="text-xs sm:text-sm text-slate-600" data-i18n="eduSub">Svensk arvsrätt innehåller några centrala begrepp som är bra att känna till när du läser resultatet.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                    <div class="text-xs font-bold text-nordic-700 uppercase mb-1">2 kap. 1 § & 7 kap. 1 § ÄB</div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1.5" data-i18n="term1Title">Arvslott vs. Laglott</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed" data-i18n="term1Desc">
+                        <strong>Arvslott</strong> är hela den andel som ett barn har rätt till enligt lag om det inte finns något testamente. <strong>Laglott</strong> är hälften (50 %) av arvslotten och kan aldrig testamenteras bort från ett barn.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                    <div class="text-xs font-bold text-nordic-700 uppercase mb-1">3 kap. 1 & 9 §§ ÄB</div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1.5" data-i18n="term2Title">Gemensamma barn & Särkullbarn</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed" data-i18n="term2Desc">
+                        Om den avlidne var gift ärver maken före <strong>gemensamma barn</strong> (barnen får vänta på efterarv). <strong>Särkullbarn</strong> (barn från tidigare förhållande) har däremot rätt att få ut sitt arv direkt vid dödsfallet.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                    <div class="text-xs font-bold text-nordic-700 uppercase mb-1">3 kap. 1 § 2 st. ÄB</div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1.5" data-i18n="term3Title">Basbeloppsregeln</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed" data-i18n="term3Desc">
+                        En skyddsregel för efterlevande make. Maken har alltid rätt att (så långt boet räcker) få så mycket ur kvarlåtenskapen att det tillsammans med makens egen egendom motsvarar 4 prisbasbelopp. Denna regel går före både testamente och särkullbarns laglott.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                    <div class="text-xs font-bold text-nordic-700 uppercase mb-1">6 kap. 1 & 5 §§ ÄB</div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1.5" data-i18n="term4Title">Förskott på arv</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed" data-i18n="term4Desc">
+                        Större gåvor som en förälder ger till ett barn under sin livstid räknas som huvudregel som förskott på arv. Vid beräkningen läggs förskottets värde fiktivt tillbaka till kvarlåtenskapen innan lotterna delas, och dras sedan av från mottagarens lott.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <div class="flex items-center gap-2 text-white font-bold text-base mb-1">
+                        <i data-lucide="scale" class="w-5 h-5 text-gold-500"></i>
+                        <span>Svensk Arvskalkylator</span>
+                        <span class="text-slate-500 font-normal">|</span>
+                        <span class="text-gold-500">By Alfred Stengard</span>
+                    </div>
+                    <p class="text-xs text-slate-400 max-w-2xl leading-relaxed" data-i18n="footerDisclaimer">
+                        Kalkylatorns algoritm och källkod är granskad och kontrollerad av jurist baserat på Ärvdabalken (1958:637). Verktyget tillhandahålls i informationssyfte och utgör inte individuell juridisk rådgivning i enskilda tvister.
+                    </p>
+                </div>
+
+                <div class="bg-slate-800/90 border border-slate-700 rounded-xl p-3.5 text-xs text-slate-300 max-w-md flex items-start gap-2.5">
+                    <i data-lucide="shield-lock" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                    <span data-i18n="footerPrivacyBox">
+                        <strong>Integritetsgaranti:</strong> Den här webbplatsen har ingen databas och använder inte AI. Alla beräkningar körs lokalt i din egen webbläsare och ingen inmatad information lämnar din dator.
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- APPLICATION LOGIC & DETERMINISTIC INHERITANCE ENGINE -->
+    <script>
+        // ==========================================
+        // 1. STATE MANAGEMENT
+        // ==========================================
+        let currentLang = 'sv';
+        let maritalStatus = 'married'; // 'single' | 'married' | 'sambo'
+        let children = [
+            { id: 1, name: 'Barn 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, waiveToSpouse: false, advanceAmount: 0 },
+            { id: 2, name: 'Barn 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, waiveToSpouse: false, advanceAmount: 0 }
+        ];
+        let nextChildId = 3;
+
+        // ==========================================
+        // 2. BILINGUAL DICTIONARY (SV / EN)
+        // ==========================================
+        const i18n = {
+            sv: {
+                appTitle: "Svensk Arvskalkylator",
+                headerVerifiedBadge: "Kod & logik kontrollerad av jurist",
+                printBtn: "Skriv ut / PDF",
+                verifiedTitle: "Juridiskt kvalitetssäkrad:",
+                verifiedDesc: "Uträkningen och den underliggande programkoden är granskad och kontrollerad av jurist utifrån Ärvdabalken (1958:637).",
+                privacyTitle: "100 % lokal beräkning:",
+                privacyDesc: "Ingen information skickas någonsin över internet. Allt beräknas direkt i webbläsaren på din egen enhet.",
+                heroHeading: "Hur fördelas arvet enligt svensk lag?",
+                heroSub: "Detta verktyg hjälper dig som inte är jurist att enkelt räkna ut exakt hur ett arv fördelas enligt Ärvdabalken. Verktyget tar hänsyn till efterlevande make, särkullbarn, prisbasbeloppsregeln, förskott på arv, samt testamente och laglott.",
+                presetsLabel: "Testa ett färdigt typfall (klicka för att fylla i):",
+                preset1: "Gift par med 2 gemensamma barn",
+                preset2: "Gift med särkullbarn + gemensamt barn",
+                preset3: "Sambo med barn & testamente (Laglott)",
+                preset4: "Ensamstående utan barn (Föräldrar/Syskon)",
+                preset5: "Litet bo med särkullbarn (Basbeloppsregeln)",
+                step1Title: "Kvarlåtenskap & Civilstånd",
+                maritalStatusLabel: "Den avlidnes civilstånd vid dödsfallet",
+                statusSingle: "Ogift / Ensamstående",
+                statusSingleSub: "Även änka/änkling eller skild",
+                statusMarried: "Gift",
+                statusMarriedSub: "Make/maka ärver enligt 3 kap. ÄB",
+                statusSambo: "Sambo",
+                statusSamboSub: "Ärver ej utan testamente",
+                samboAlertTitle: "Viktigt om sambor (Sambolagen & Ärvdabalken)",
+                samboAlertDesc: "Sambor ärver inte varandra enligt lag, oavsett om man har gemensamma barn eller hur länge man bott ihop. För att en sambo ska ärva krävs ett <strong>testamente</strong> (vilket du kan lägga till i Steg 3 nedan).",
+                estateValueLabel: "Den avlidnes kvarlåtenskap (SEK)",
+                estateValueHelp: "Nettotillgångar efter skulder (och eventuell bodelning).",
+                spousePropertyLabel: "Efterlevande makes egendom (SEK)",
+                spousePropertyHelp: "Från bodelning + enskild egendom (för basbeloppsregeln).",
+                pbbExplanation: "<strong>Basbeloppsregeln (3 kap. 1 § 2 st. ÄB):</strong> Efterlevande make har alltid rätt att få ut så mycket ur boet att totalen (inkl. egen del) uppgår till minst 4 prisbasbelopp.",
+                pbbInputLabel: "Prisbasbelopp:",
+                step2Title: "Arvingar & Familjesituation",
+                class1Title: "Första arvsklassen: Barn (Bröstarvingar)",
+                class1Sub: "Biologiska och adopterade barn till den avlidne. Om ett barn är avlidet träder barnbarn i dess ställe.",
+                addChildBtn: "Lägg till barn",
+                class2TriggerNote: "Eftersom det inte finns några bröstarvingar (barn eller barnbarn) går arvet vidare till <strong>andra arvsklassen</strong> (föräldrar och syskon enligt 2 kap. 2 § ÄB).",
+                class2Title: "Andra arvsklassen: Föräldrar & Syskon (2 kap. 2 § ÄB)",
+                motherLabel: "Den avlidnes Mor",
+                fatherLabel: "Den avlidnes Far",
+                aliveToggle: "I livet",
+                maternalHalfSibsLabel: "Halvsyskon på mors sida (aktiva grenar)",
+                paternalHalfSibsLabel: "Halvsyskon på fars sida (aktiva grenar)",
+                fullSiblingsLabel: "Antal helsyskon (eller avlidna helsyskon med egna barn)",
+                fullSiblingsHelp: "Om en förälder är avliden delar syskonen på den förälderns halva. Om ett syskon är avlidet träder syskonbarn i dess ställe.",
+                class3TriggerNote: "När varken barn, föräldrar, syskon eller syskonbarn finns i livet går arvet till <strong>tredje arvsklassen</strong> (mor- och farföräldrar samt mostrar/morbröder/fastrar/farbröder enligt 2 kap. 3 § ÄB). <em>Observera att kusiner inte ärver enligt lag (2 kap. 4 § ÄB).</em>",
+                class3Title: "Tredje arvsklassen: Mor- & Farföräldrar (2 kap. 3 § ÄB)",
+                maternalGPTitle: "Mors sida (Mormor & Morfar)",
+                mormorLabel: "Mormor i livet",
+                morfarLabel: "Morfar i livet",
+                maternalAuntsUnclesLabel: "Mostrar / Morbröder i livet (antal)",
+                paternalGPTitle: "Fars sida (Farmor & Farfar)",
+                farmorLabel: "Farmor i livet",
+                farfarLabel: "Farfar i livet",
+                paternalAuntsUnclesLabel: "Fastrar / Farbröder i livet (antal)",
+                step3Title: "Testamente & Laglott",
+                hasWillLabel: "Finns det ett giltigt testamente?",
+                hasWillSub: "Genom testamente kan arvlåtaren ändra fördelningen, med förbehåll för bröstarvingars laglott och makes basbeloppsskydd.",
+                willBeneficiaryLabel: "Mottagare i testamentet (Namn/Roll)",
+                willLegatLabel: "Specifikt penninglegat (11 kap. 2 § ÄB, SEK)",
+                willShareLabel: "Universellt förordnande (% av återstående kvarlåtenskap)",
+                willHalfHint: "50 % (t.ex. halva boet)",
+                willAllHint: "100 % (hela boet)",
+                claimLaglottTitle: "Bröstarvingar begär jämkning för att få ut sin laglott (7 kap. 1 & 3 §§ ÄB)",
+                claimLaglottDesc: "En bröstarvinge har alltid rätt till sin <em>laglott</em>, vilket är hälften (50 %) av den arvslott barnet skulle ha fått om inget testamente fanns.",
+                resultBadge: "Resultat & Fördelning",
+                deterministicTag: "Deterministisk beräkning",
+                resultHeading: "Fördelning av kvarlåtenskap",
+                totalEstateSummaryLabel: "Kvarlåtenskap att fördela:",
+                visualSplitLabel: "Visuell fördelning vid dödsfallet",
+                beneficiariesListHeader: "Mottagare & Juridisk grund",
+                efterarvHeader: "Rätt till Efterarv (3 kap. 2 § ÄB)",
+                cardFooterLegal: "Beräkningslogiken och koden är kontrollerad av jurist mot Ärvdabalken (1958:637).",
+                cardFooterPrivacy: "Uträkningen sker 100 % lokalt på din dator – ingen data skickas över internet.",
+                eduTitle: "Kort ordlista för icke-jurister",
+                eduSub: "Svensk arvsrätt innehåller några centrala begrepp som är bra att känna till när du läser resultatet.",
+                term1Title: "Arvslott vs. Laglott",
+                term1Desc: "<strong>Arvslott</strong> är hela den andel som ett barn har rätt till enligt lag om det inte finns något testamente. <strong>Laglott</strong> är hälften (50 %) av arvslotten och kan aldrig testamenteras bort från ett barn.",
+                term2Title: "Gemensamma barn & Särkullbarn",
+                term2Desc: "Om den avlidne var gift ärver maken före <strong>gemensamma barn</strong> (barnen får vänta på efterarv). <strong>Särkullbarn</strong> (barn från tidigare förhållande) har däremot rätt att få ut sitt arv direkt vid dödsfallet.",
+                term3Title: "Basbeloppsregeln",
+                term3Desc: "En skyddsregel för efterlevande make. Maken har alltid rätt att (så långt boet räcker) få så mycket ur kvarlåtenskapen att det tillsammans med makens egen egendom motsvarar 4 prisbasbelopp. Denna regel går före både testamente och särkullbarns laglott.",
+                term4Title: "Förskott på arv",
+                term4Desc: "Större gåvor som en förälder ger till ett barn under sin livstid räknas som huvudregel som förskott på arv. Vid beräkningen läggs förskottets värde fiktivt tillbaka till kvarlåtenskapen innan lotterna delas, och dras sedan av från mottagarens lott.",
+                footerDisclaimer: "Kalkylatorns algoritm och källkod är granskad och kontrollerad av jurist baserat på Ärvdabalken (1958:637). Verktyget tillhandahålls i informationssyfte och utgör inte individuell juridisk rådgivning i enskilda tvister.",
+                footerPrivacyBox: "<strong>Integritetsgaranti:</strong> Den här webbplatsen har ingen databas och använder inte AI. Alla beräkningar körs lokalt i din egen webbläsare och ingen inmatad information lämnar din dator.",
+                // Dynamic UI strings
+                noChildrenMsg: "Inga barn tillagda. Arvet beräknas enligt andra/tredje arvsklassen eller make.",
+                jointChildLabel: "Gemensamt barn med make",
+                sarkullChildLabel: "Särkullbarn (endast den avlidnes barn)",
+                childAliveStatus: "I livet",
+                childDeceasedStatus: "Avliden (Barnbarn träder in)",
+                grandchildrenCountLabel: "Antal barnbarn i denna gren:",
+                waiveToSpouseLabel: "Avstår arv nu till förmån för efterlevande make (3 kap. 9 § ÄB - ger efterarvsrätt)",
+                advanceLabel: "Mottaget förskott på arv (6 kap. ÄB, SEK):",
+                removeChildTitle: "Ta bort barn",
+                spouseName: "Efterlevande make/maka",
+                arvsfondenName: "Allmänna arvsfonden",
+                motherName: "Mor",
+                fatherName: "Far",
+                fullSiblingsName: "Helsyskon",
+                matHalfSibsName: "Halvsyskon (mors sida)",
+                patHalfSibsName: "Halvsyskon (fars sida)",
+                mormorName: "Mormor",
+                morfarName: "Morfar",
+                matAuntsName: "Mostrar/Morbröder",
+                farmorName: "Farmor",
+                farfarName: "Farfar",
+                patAuntsName: "Fastrar/Farbröder",
+                paidNowLabel: "Utbetalas direkt",
+                arvslottLabel: "Lagstadgad arvslott",
+                laglottLabel: "Skyddad laglott",
+                eachBranchGets: "Varje barnbarn i grenen får"
+            },
+            en: {
+                appTitle: "Swedish Inheritance Calculator",
+                headerVerifiedBadge: "Code & logic verified by legal counsel",
+                printBtn: "Print / PDF",
+                verifiedTitle: "Legally Verified:",
+                verifiedDesc: "The calculation logic and underlying source code have been reviewed and verified by a lawyer based on the Swedish Inheritance Code (Ärvdabalken 1958:637).",
+                privacyTitle: "100% Local Calculation:",
+                privacyDesc: "No information is ever sent over the internet. Everything is calculated directly inside the browser on your own device.",
+                heroHeading: "How is an estate divided under Swedish law?",
+                heroSub: "This tool helps non-lawyers easily calculate how an inheritance is distributed under the Swedish Inheritance Code (Ärvdabalken). It accounts for surviving spouses, separate children (särkullbarn), the price base amount rule, advances on inheritance, wills, and statutory shares (laglott).",
+                presetsLabel: "Try a common scenario (click to auto-fill):",
+                preset1: "Married couple with 2 joint children",
+                preset2: "Married with separate child (särkullbarn) + joint child",
+                preset3: "Cohabiting (Sambo) with children & will (Laglott)",
+                preset4: "Single without children (Parents/Siblings)",
+                preset5: "Small estate with separate child (Base Amount Rule)",
+                step1Title: "Estate Value & Marital Status",
+                maritalStatusLabel: "Marital status of the deceased at the time of death",
+                statusSingle: "Single / Unmarried",
+                statusSingleSub: "Including widowed or divorced",
+                statusMarried: "Married",
+                statusMarriedSub: "Spouse inherits under Ch. 3 ÄB",
+                statusSambo: "Cohabiting (Sambo)",
+                statusSamboSub: "Does not inherit without a will",
+                samboAlertTitle: "Important note regarding Cohabitants (Sambor)",
+                samboAlertDesc: "Cohabiting partners (sambor) do not inherit from each other by Swedish law, regardless of whether they have joint children or how long they have lived together. A <strong>will (testamente)</strong> is required (which you can enable in Step 3 below).",
+                estateValueLabel: "Net Estate of the Deceased (SEK)",
+                estateValueHelp: "Net assets after debts (and any marital property division / bodelning).",
+                spousePropertyLabel: "Surviving Spouse's Property (SEK)",
+                spousePropertyHelp: "From marital division + separate property (used for the Base Amount Rule).",
+                pbbExplanation: "<strong>Base Amount Rule (Ch. 3 Sec. 1 Para. 2 ÄB):</strong> The surviving spouse is always entitled to receive enough from the estate so their total property equals at least 4 Price Base Amounts.",
+                pbbInputLabel: "Price Base Amount:",
+                step2Title: "Heirs & Family Tree",
+                class1Title: "1st Inheritance Class: Children (Bröstarvingar)",
+                class1Sub: "Biological and adopted children of the deceased. If a child is deceased, grandchildren step into their branch (istadarätt).",
+                addChildBtn: "Add Child",
+                class2TriggerNote: "Since there are no direct descendants (children or grandchildren), the estate passes to the <strong>2nd inheritance class</strong> (parents and siblings under Ch. 2 Sec. 2 ÄB).",
+                class2Title: "2nd Inheritance Class: Parents & Siblings (Ch. 2 Sec. 2 ÄB)",
+                motherLabel: "Deceased's Mother",
+                fatherLabel: "Deceased's Father",
+                aliveToggle: "Alive",
+                maternalHalfSibsLabel: "Maternal half-siblings (active branches)",
+                paternalHalfSibsLabel: "Paternal half-siblings (active branches)",
+                fullSiblingsLabel: "Number of full siblings (or deceased full siblings with children)",
+                fullSiblingsHelp: "If a parent is deceased, siblings share that parent's half. If a sibling is deceased, their children step in.",
+                class3TriggerNote: "When neither children, parents, siblings, nor nieces/nephews survive, the estate passes to the <strong>3rd inheritance class</strong> (grandparents, aunts, and uncles under Ch. 2 Sec. 3 ÄB). <em>Note: Cousins do not inherit by law (Ch. 2 Sec. 4 ÄB).</em>",
+                class3Title: "3rd Inheritance Class: Grandparents, Aunts & Uncles (Ch. 2 Sec. 3 ÄB)",
+                maternalGPTitle: "Maternal Side (Grandmother & Grandfather)",
+                mormorLabel: "Maternal Grandmother alive",
+                morfarLabel: "Maternal Grandfather alive",
+                maternalAuntsUnclesLabel: "Maternal Aunts / Uncles alive (count)",
+                paternalGPTitle: "Paternal Side (Grandmother & Grandfather)",
+                farmorLabel: "Paternal Grandmother alive",
+                farfarLabel: "Paternal Grandfather alive",
+                paternalAuntsUnclesLabel: "Paternal Aunts / Uncles alive (count)",
+                step3Title: "Will & Statutory Share (Testamente & Laglott)",
+                hasWillLabel: "Is there a valid will (testamente)?",
+                hasWillSub: "A will can alter the distribution, subject to direct descendants' statutory share (laglott) and the spouse's base amount protection.",
+                willBeneficiaryLabel: "Beneficiary in the Will (Name/Role)",
+                willLegatLabel: "Specific Monetary Legacy (Legat - Ch. 11 Sec. 2 ÄB, SEK)",
+                willShareLabel: "Universal Bequest (% of remaining estate)",
+                willHalfHint: "50% (half of remaining)",
+                willAllHint: "100% (entire remaining estate)",
+                claimLaglottTitle: "Direct descendants claim their statutory share / Laglott (Ch. 7 Sec. 1 & 3 ÄB)",
+                claimLaglottDesc: "A direct descendant (child/grandchild) is always entitled to their <em>laglott</em>, which is half (50%) of the statutory share they would have received without a will.",
+                resultBadge: "Results & Distribution",
+                deterministicTag: "Deterministic Engine",
+                resultHeading: "Distribution of Estate",
+                totalEstateSummaryLabel: "Net estate to distribute:",
+                visualSplitLabel: "Visual split at time of death",
+                beneficiariesListHeader: "Beneficiaries & Legal Basis",
+                efterarvHeader: "Right to Delayed Inheritance / Efterarv (Ch. 3 Sec. 2 ÄB)",
+                cardFooterLegal: "Calculation logic and code verified by a lawyer against Ärvdabalken (1958:637).",
+                cardFooterPrivacy: "Calculated 100% locally on your device – no data is transmitted over the internet.",
+                eduTitle: "Brief Glossary for Non-Lawyers",
+                eduSub: "Swedish inheritance law uses a few key concepts that are helpful to understand when reading your results.",
+                term1Title: "Arvslott vs. Laglott",
+                term1Desc: "<strong>Arvslott</strong> is the full statutory share a child is entitled to if there is no will. <strong>Laglott</strong> is half (50%) of the arvslott and cannot be overridden by a will.",
+                term2Title: "Joint Children vs. Särkullbarn",
+                term2Desc: "If the deceased was married, the surviving spouse inherits before <strong>joint children</strong> (who receive delayed inheritance / efterarv later). <strong>Särkullbarn</strong> (children from a previous relationship) have the right to claim their inheritance immediately.",
+                term3Title: "Base Amount Rule (Basbeloppsregeln)",
+                term3Desc: "A protective rule for a surviving spouse. The spouse always has the right (as far as the estate allows) to receive enough from the estate so that, combined with their own property, they hold at least 4 Price Base Amounts. This overrides both wills and children's laglott.",
+                term4Title: "Advance on Inheritance (Förskott på arv)",
+                term4Desc: "Significant gifts given to a child during the parent's lifetime are presumed to be advances on inheritance. The gift value is notionally added back to the estate to compute shares, and then deducted from that child's payout.",
+                footerDisclaimer: "The calculator's algorithm and code have been reviewed and verified by a legal professional based on the Swedish Inheritance Code (Ärvdabalken 1958:637). Provided for informational purposes and does not constitute formal legal representation.",
+                footerPrivacyBox: "<strong>Privacy Guarantee:</strong> This website has no database and uses no AI. All calculations run locally inside your browser and no entered information ever leaves your device.",
+                // Dynamic UI strings
+                noChildrenMsg: "No children added. Inheritance is calculated via the 2nd/3rd class or surviving spouse.",
+                jointChildLabel: "Joint child with spouse",
+                sarkullChildLabel: "Separate child (Särkullbarn)",
+                childAliveStatus: "Alive",
+                childDeceasedStatus: "Deceased (Grandchildren step in)",
+                grandchildrenCountLabel: "Number of grandchildren in branch:",
+                waiveToSpouseLabel: "Waives immediate payout in favor of spouse (Ch. 3 Sec. 9 ÄB - grants efterarv)",
+                advanceLabel: "Advance on inheritance received (Ch. 6 ÄB, SEK):",
+                removeChildTitle: "Remove child",
+                spouseName: "Surviving Spouse",
+                arvsfondenName: "The Swedish Inheritance Fund (Allmänna arvsfonden)",
+                motherName: "Mother",
+                fatherName: "Father",
+                fullSiblingsName: "Full Siblings",
+                matHalfSibsName: "Half-siblings (Maternal)",
+                patHalfSibsName: "Half-siblings (Paternal)",
+                mormorName: "Maternal Grandmother",
+                morfarName: "Maternal Grandfather",
+                matAuntsName: "Maternal Aunts/Uncles",
+                farmorName: "Paternal Grandmother",
+                farfarName: "Paternal Grandfather",
+                patAuntsName: "Paternal Aunts/Uncles",
+                paidNowLabel: "Paid out immediately",
+                arvslottLabel: "Statutory share (Arvslott)",
+                laglottLabel: "Protected share (Laglott)",
+                eachBranchGets: "Each grandchild in branch gets"
+            }
+        };
+
+        // Helper to format currency
+        function formatSEK(amount) {
+            const rounded = Math.round(amount);
+            return rounded.toLocaleString(currentLang === 'sv' ? 'sv-SE' : 'en-US') + ' kr';
+        }
+
+        function formatPercent(ratio) {
+            return (ratio * 100).toFixed(1).replace('.0', '') + ' %';
+        }
+
+        // ==========================================
+        // 3. UI INTERACTION HANDLERS
+        // ==========================================
+        function toggleLanguage() {
+            currentLang = currentLang === 'sv' ? 'en' : 'sv';
+            document.documentElement.lang = currentLang;
+            document.getElementById('langToggleText').innerText = currentLang === 'sv' ? 'English (EN)' : 'Svenska (SV)';
+
+            // Translate all static data-i18n elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang][key]) {
+                    el.innerHTML = i18n[currentLang][key];
+                }
+            });
+
+            // Update default child names if they match standard pattern
+            children.forEach((c, idx) => {
+                if (c.name.startsWith('Barn ') || c.name.startsWith('Child ')) {
+                    c.name = (currentLang === 'sv' ? 'Barn ' : 'Child ') + (idx + 1);
+                }
+            });
+
+            const willInput = document.getElementById('willBeneficiaryName');
+            if (willInput.value === 'Sambo / Valbar mottagare' && currentLang === 'en') {
+                willInput.value = 'Cohabitant / Chosen Beneficiary';
+            } else if (willInput.value === 'Cohabitant / Chosen Beneficiary' && currentLang === 'sv') {
+                willInput.value = 'Sambo / Valbar mottagare';
+            }
+
+            renderChildrenList();
+            recalculate();
+        }
+
+        function setMaritalStatus(status) {
+            maritalStatus = status;
+            ['single', 'married', 'sambo'].forEach(s => {
+                const btn = document.getElementById('statusBtn_' + s);
+                if (s === status) {
+                    btn.className = "status-card flex flex-col items-start p-3.5 rounded-xl border-2 border-nordic-800 bg-nordic-50/70 text-left transition cursor-pointer shadow-xs";
+                } else {
+                    btn.className = "status-card flex flex-col items-start p-3.5 rounded-xl border-2 border-slate-200 hover:border-slate-300 bg-white text-left transition cursor-pointer";
+                }
+            });
+
+            document.getElementById('samboNotice').classList.toggle('hidden', status !== 'sambo');
+            document.getElementById('spousePropertyBox').classList.toggle('hidden', status !== 'married');
+            document.getElementById('basbeloppConfigBox').classList.toggle('hidden', status !== 'married');
+
+            renderChildrenList();
+            recalculate();
+        }
+
+        function toggleWillSection() {
+            const checked = document.getElementById('hasWillToggle').checked;
+            document.getElementById('willDetailsSection').classList.toggle('hidden', !checked);
+            recalculate();
+        }
+
+        function addChild() {
+            const label = (currentLang === 'sv' ? 'Barn ' : 'Child ') + (children.length + 1);
+            children.push({
+                id: nextChildId++,
+                name: label,
+                isJoint: maritalStatus === 'married',
+                isDeceased: false,
+                grandchildrenCount: 2,
+                waiveToSpouse: false,
+                advanceAmount: 0
+            });
+            renderChildrenList();
+            recalculate();
+        }
+
+        function removeChild(id) {
+            children = children.filter(c => c.id !== id);
+            renderChildrenList();
+            recalculate();
+        }
+
+        function updateChildField(id, field, value) {
+            const child = children.find(c => c.id === id);
+            if (!child) return;
+            child[field] = value;
+            if (field === 'isDeceased' || field === 'isJoint') {
+                renderChildrenList();
+            }
+            recalculate();
+        }
+
+        function renderChildrenList() {
+            const container = document.getElementById('childrenListContainer');
+            const dict = i18n[currentLang];
+
+            if (children.length === 0) {
+                container.innerHTML = `
+                    <div class="p-4 rounded-xl border border-dashed border-slate-300 text-center text-xs text-slate-500">
+                        ${dict.noChildrenMsg}
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = children.map((child) => `
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-3 transition-all-smooth">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 flex-grow sm:flex-grow-0">
+                            <span class="w-6 h-6 rounded-lg bg-nordic-800/10 text-nordic-800 font-bold text-xs flex items-center justify-center shrink-0">
+                                <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                            </span>
+                            <input type="text" value="${child.name}" oninput="updateChildField(${child.id}, 'name', this.value)"
+                                class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-semibold text-slate-900 w-40 focus:border-nordic-700 outline-none">
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <!-- Alive or Deceased select -->
+                            <select onchange="updateChildField(${child.id}, 'isDeceased', this.value === 'true')"
+                                class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-medium text-slate-700">
+                                <option value="false" ${!child.isDeceased ? 'selected' : ''}>${dict.childAliveStatus}</option>
+                                <option value="true" ${child.isDeceased ? 'selected' : ''}>${dict.childDeceasedStatus}</option>
+                            </select>
+
+                            <button type="button" onclick="removeChild(${child.id})" title="${dict.removeChildTitle}"
+                                class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    ${child.isDeceased ? `
+                        <div class="flex items-center gap-3 pl-8 pt-1 text-xs text-slate-700">
+                            <span>↳ ${dict.grandchildrenCountLabel}</span>
+                            <input type="number" value="${child.grandchildrenCount}" min="0" max="20"
+                                oninput="updateChildField(${child.id}, 'grandchildrenCount', parseInt(this.value) || 0)"
+                                class="w-16 bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-center">
+                        </div>
+                    ` : ''}
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200/80">
+                        ${maritalStatus === 'married' ? `
+                            <div>
+                                <select onchange="updateChildField(${child.id}, 'isJoint', this.value === 'true')"
+                                    class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold ${child.isJoint ? 'text-nordic-800' : 'text-amber-800 bg-amber-50/50 border-amber-300'}">
+                                    <option value="true" ${child.isJoint ? 'selected' : ''}>${dict.jointChildLabel}</option>
+                                    <option value="false" ${!child.isJoint ? 'selected' : ''}>${dict.sarkullChildLabel}</option>
+                                </select>
+                                ${!child.isJoint ? `
+                                    <label class="flex items-start gap-2 mt-2 text-[11px] text-slate-600 cursor-pointer">
+                                        <input type="checkbox" ${child.waiveToSpouse ? 'checked' : ''}
+                                            onchange="updateChildField(${child.id}, 'waiveToSpouse', this.checked)"
+                                            class="mt-0.5 rounded text-nordic-800">
+                                        <span>${dict.waiveToSpouseLabel}</span>
+                                    </label>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
+                        <div class="${maritalStatus !== 'married' ? 'sm:col-span-2' : ''}">
+                            <div class="flex items-center justify-between gap-2">
+                                <label class="text-[11px] text-slate-600 font-medium">${dict.advanceLabel}</label>
+                                <div class="relative w-36 shrink-0">
+                                    <input type="number" value="${child.advanceAmount}" min="0" step="10000"
+                                        oninput="updateChildField(${child.id}, 'advanceAmount', parseFloat(this.value) || 0)"
+                                        class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 pr-7 text-xs font-semibold text-right">
+                                    <span class="absolute right-2 top-1 text-[11px] text-slate-400">kr</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // 4. PRESET SCENARIOS LOADER
+        // ==========================================
+        function loadScenario(type) {
+            // Reset defaults
+            document.getElementById('hasWillToggle').checked = false;
+            document.getElementById('willLegatAmount').value = 0;
+            document.getElementById('willUniversalPercent').value = 100;
+            document.getElementById('willPercentDisplay').innerText = '100 %';
+            document.getElementById('claimLaglottCheck').checked = true;
+
+            if (type === 'married_joint') {
+                document.getElementById('estateValueInput').value = 1600000;
+                document.getElementById('spousePropertyInput').value = 1600000;
+                children = [
+                    { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 0, waiveToSpouse: false, advanceAmount: 0 },
+                    { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 0, waiveToSpouse: false, advanceAmount: 0 }
+                ];
+                setMaritalStatus('married');
+            } else if (type === 'married_sarkull') {
+                document.getElementById('estateValueInput').value = 1500000;
+                document.getElementById('spousePropertyInput').value = 1500000;
+                children = [
+                    { id: 1, name: currentLang === 'sv' ? 'Särkullbarn 1' : 'Separate Child 1', isJoint: false, isDeceased: false, grandchildrenCount: 0, waiveToSpouse: false, advanceAmount: 0 },
+                    { id: 2, name: currentLang === 'sv' ? 'Gemensamt barn 2' : 'Joint Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 0, waiveToSpouse: false, advanceAmount: 0 }
+                ];
+                setMaritalStatus('married');
+            } else if (type === 'sambo_will') {
+                document.getElementById('estateValueInput').value = 1000000;
+                children = [
+                    { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 0, waiveToSpouse: false, advanceAmount: 0 },
+                    { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 0, waiveToSpouse: false, advanceAmount: 0 }
+                ];
+                document.getElementById('hasWillToggle').checked = true;
+                document.getElementById('willBeneficiaryName').value = currentLang === 'sv' ? 'Efterlevande Sambo' : 'Surviving Cohabitant';
+                document.getElementById('willUniversalPercent').value = 100;
+                document.getElementById('willPercentDisplay').innerText = '100 %';
+                document.getElementById('claimLaglottCheck').checked = true;
+                setMaritalStatus('sambo');
+            } else if (type === 'single_siblings') {
+                document.getElementById('estateValueInput').value = 900000;
+                children = [];
+                document.getElementById('motherAliveCheck').checked = true;
+                document.getElementById('fatherAliveCheck').checked = false;
+                document.getElementById('fullSiblingsInput').value = 2;
+                document.getElementById('maternalHalfSibsInput').value = 0;
+                document.getElementById('paternalHalfSibsInput').value = 1;
+                setMaritalStatus('single');
+            } else if (type === 'basbelopp_rule') {
+                document.getElementById('estateValueInput').value = 150000;
+                document.getElementById('spousePropertyInput').value = 50000;
+                children = [
+                    { id: 1, name: currentLang === 'sv' ? 'Särkullbarn' : 'Separate Child', isJoint: false, isDeceased: false, grandchildrenCount: 0, waiveToSpouse: false, advanceAmount: 0 }
+                ];
+                setMaritalStatus('married');
+            }
+
+            toggleWillSection();
+            renderChildrenList();
+            recalculate();
+        }
+
+        // ==========================================
+        // 5. DETERMINISTIC SWEDISH INHERITANCE ENGINE (ÄRVDABALKEN)
+        // ==========================================
+        function recalculate() {
+            const dict = i18n[currentLang];
+            const estateValue = Math.max(0, parseFloat(document.getElementById('estateValueInput').value) || 0);
+            const spouseProperty = Math.max(0, parseFloat(document.getElementById('spousePropertyInput').value) || 0);
+            const pbb = Math.max(1000, parseFloat(document.getElementById('pbbInput').value) || 59200);
+
+            document.getElementById('summaryTotalEstate').innerText = formatSEK(estateValue);
+
+            // Filter active 1st class branches (alive child OR deceased child with >= 1 grandchild)
+            const activeChildren = children.filter(c => !c.isDeceased || (c.isDeceased && c.grandchildrenCount > 0));
+            const hasFirstClass = activeChildren.length > 0;
+
+            // Toggle visibility of 2nd and 3rd class forms
+            document.getElementById('secondClassSection').classList.toggle('hidden', hasFirstClass);
+
+            // Check 2nd class existence
+            const motherAlive = document.getElementById('motherAliveCheck').checked;
+            const fatherAlive = document.getElementById('fatherAliveCheck').checked;
+            const fullSibs = Math.max(0, parseInt(document.getElementById('fullSiblingsInput').value) || 0);
+            const matHalfSibs = Math.max(0, parseInt(document.getElementById('maternalHalfSibsInput').value) || 0);
+            const patHalfSibs = Math.max(0, parseInt(document.getElementById('paternalHalfSibsInput').value) || 0);
+
+            const hasSecondClass = !hasFirstClass && (motherAlive || fatherAlive || fullSibs > 0 || matHalfSibs > 0 || patHalfSibs > 0);
+            document.getElementById('thirdClassSection').classList.toggle('hidden', hasFirstClass || hasSecondClass);
+
+            // Check Will settings
+            const hasWill = document.getElementById('hasWillToggle').checked;
+            const willBeneficiary = document.getElementById('willBeneficiaryName').value.trim() || 'Testamentstagare';
+            const willLegat = hasWill ? Math.max(0, parseFloat(document.getElementById('willLegatAmount').value) || 0) : 0;
+            const willPercent = hasWill ? (parseFloat(document.getElementById('willUniversalPercent').value) || 0) / 100 : 0;
+            const claimLaglott = document.getElementById('claimLaglottCheck').checked;
+
+            // Data structures for output
+            let payouts = []; // { name, role, amountNow, arvslott, laglott, citation, explanation, color, subNote }
+            let efterarvItems = []; // { name, shareText, citation }
+            let mainRuleCitation = "2 kap. 1 § ÄB";
+            let summaryParagraphs = [];
+
+            // ---------------------------------------------------------
+            // STEP A: BASBELOPPSREGELN CHECK (3 kap. 1 § 2 st. ÄB)
+            // ---------------------------------------------------------
+            let spouseMandatoryMinFromEstate = 0;
+            let basbeloppTriggered = false;
+            if (maritalStatus === 'married') {
+                const fourPbb = 4 * pbb;
+                if (spouseProperty < fourPbb) {
+                    spouseMandatoryMinFromEstate = Math.min(estateValue, fourPbb - spouseProperty);
+                    if (spouseMandatoryMinFromEstate > 0) {
+                        basbeloppTriggered = true;
+                    }
+                }
+            }
+
+            // ---------------------------------------------------------
+            // STEP B: COMPUTE BASE STATUTORY SHARES (ARVSLOTTER)
+            // ---------------------------------------------------------
+            if (hasFirstClass) {
+                mainRuleCitation = maritalStatus === 'married' ? "3 kap. 1 § & 2 kap. 1 § ÄB" : "2 kap. 1 § ÄB";
+                const n = activeChildren.length;
+
+                // Handle Advances on Inheritance (Förskott på arv - 6 kap. 1, 4, 5 §§ ÄB)
+                // Under 6 kap. 5 §, the estate is notionally increased by the advance (capped at what can be deducted).
+                // Let's iteratively solve exact deductible advances per child:
+                let effectiveAdvances = activeChildren.map(c => Math.max(0, c.advanceAmount || 0));
+                for (let iter = 0; iter < 5; iter++) {
+                    const totalNotional = estateValue + effectiveAdvances.reduce((a, b) => a + b, 0);
+                    const theoreticalShare = totalNotional / n;
+                    effectiveAdvances = activeChildren.map((c, idx) => Math.min(c.advanceAmount || 0, theoreticalShare));
+                }
+                const totalEffectiveAdvance = effectiveAdvances.reduce((a, b) => a + b, 0);
+                const notionalEstate = estateValue + totalEffectiveAdvance;
+
+                // Each child's net statutory share from the actual estate (before will / spouse rules)
+                const rawNetShares = activeChildren.map((c, idx) => Math.max(0, (notionalEstate / n) - effectiveAdvances[idx]));
+                const sumRawNet = rawNetShares.reduce((a, b) => a + b, 0);
+
+                // Normalize to actual estateValue
+                const childArvslotter = rawNetShares.map(val => sumRawNet > 0 ? (val / sumRawNet) * estateValue : estateValue / n);
+                const childLaglotter = childArvslotter.map(val => val * 0.5);
+
+                // Calculate how much is available after mandatory Basbeloppsregeln for spouse
+                let remainingEstate = estateValue;
+                let spouseTotalNow = 0;
+
+                if (maritalStatus === 'married' && basbeloppTriggered) {
+                    // Check if Basbeloppsregeln encroaches on wills or särkullbarn
+                    // Notice: Under 3 kap. 1 § 2 st. ÄB, spouse gets at least spouseMandatoryMinFromEstate
+                }
+
+                // Calculate Will allocation if a Will exists
+                let willTotalPayout = 0;
+                if (hasWill && remainingEstate > 0) {
+                    // Maximum that can be willed away:
+                    // 1. Cannot infringe on surviving spouse's 4x PBB (3 kap. 1 § 2 st. ÄB)
+                    // 2. If claimLaglott is true, cannot infringe on children's Laglott (7 kap. 1 & 3 §§ ÄB)
+                    const totalProtectedLaglott = claimLaglott ? childLaglotter.reduce((a, b) => a + b, 0) : 0;
+                    const maxAvailableForWill = Math.max(0, estateValue - Math.max(spouseMandatoryMinFromEstate, totalProtectedLaglott));
+
+                    const desiredWillAmount = Math.min(estateValue, willLegat + Math.max(0, estateValue - willLegat) * willPercent);
+                    willTotalPayout = Math.min(desiredWillAmount, maxAvailableForWill);
+
+                    if (desiredWillAmount > maxAvailableForWill && claimLaglott) {
+                        mainRuleCitation = "7 kap. 1 & 3 §§ ÄB (Jämkning av testamente)";
+                    }
+                }
+
+                const estateForHeirs = Math.max(0, estateValue - willTotalPayout);
+
+                // Distribute estateForHeirs among children / surviving spouse
+                let childrenPayoutsNow = new Array(n).fill(0);
+
+                // First distribute proportional to childArvslotter
+                const totalArvslottSum = childArvslotter.reduce((a, b) => a + b, 0);
+                activeChildren.forEach((child, idx) => {
+                    const shareOfRemaining = totalArvslottSum > 0 ? (childArvslotter[idx] / totalArvslottSum) * estateForHeirs : estateForHeirs / n;
+
+                    if (maritalStatus === 'married') {
+                        if (child.isJoint) {
+                            // Joint child: Spouse inherits their share with fri förfoganderätt (3 kap. 1 § ÄB)
+                            spouseTotalNow += shareOfRemaining;
+                            efterarvItems.push({
+                                name: child.name,
+                                amount: shareOfRemaining,
+                                citation: "3 kap. 1 & 2 §§ ÄB",
+                                type: currentLang === 'sv' ? "Gemensamt barn (Efterarv)" : "Joint child (Delayed inheritance)"
+                            });
+                        } else if (child.waiveToSpouse) {
+                            // Särkullbarn waiving under 3 kap. 9 § ÄB
+                            spouseTotalNow += shareOfRemaining;
+                            efterarvItems.push({
+                                name: child.name,
+                                amount: shareOfRemaining,
+                                citation: "3 kap. 9 § & 2 § ÄB",
+                                type: currentLang === 'sv' ? "Särkullbarn som avstått till förmån för make" : "Separate child waiving in favor of spouse"
+                            });
+                        } else {
+                            // Särkullbarn claims immediate inheritance (3 kap. 1 § 1 st. ÄB)
+                            childrenPayoutsNow[idx] = shareOfRemaining;
+                        }
+                    } else {
+                        // Single or Sambo: Child gets their share immediately
+                        childrenPayoutsNow[idx] = shareOfRemaining;
+                    }
+                });
+
+                // Enforce Basbeloppsregeln (3 kap. 1 § 2 st. ÄB) against särkullbarn's immediate payouts if needed
+                if (maritalStatus === 'married' && spouseTotalNow < spouseMandatoryMinFromEstate) {
+                    const deficit = spouseMandatoryMinFromEstate - spouseTotalNow;
+                    const totalSarkullNow = childrenPayoutsNow.reduce((a, b) => a + b, 0);
+                    if (totalSarkullNow > 0) {
+                        const reductionRatio = Math.min(1, deficit / totalSarkullNow);
+                        activeChildren.forEach((child, idx) => {
+                            if (childrenPayoutsNow[idx] > 0) {
+                                const takenByBasbelopp = childrenPayoutsNow[idx] * reductionRatio;
+                                childrenPayoutsNow[idx] -= takenByBasbelopp;
+                                spouseTotalNow += takenByBasbelopp;
+                                efterarvItems.push({
+                                    name: child.name,
+                                    amount: takenByBasbelopp,
+                                    citation: "3 kap. 1 § 2 st. & 2 § ÄB",
+                                    type: currentLang === 'sv' ? "Särkullbarn (Efterarv p.g.a. basbeloppsregeln)" : "Separate child (Delayed due to Base Amount Rule)"
+                                });
+                            }
+                        });
+                        mainRuleCitation = "3 kap. 1 § 2 st. ÄB (Basbeloppsregeln)";
+                    }
+                }
+
+                // Add Spouse Card if married and spouse receives > 0 (or if married with joint children)
+                if (maritalStatus === 'married' && (spouseTotalNow > 0 || estateValue === 0)) {
+                    payouts.push({
+                        name: dict.spouseName,
+                        role: currentLang === 'sv' ? "Make/Maka (Fri förfoganderätt)" : "Surviving Spouse (Free disposal)",
+                        amountNow: spouseTotalNow,
+                        arvslott: null,
+                        laglott: null,
+                        citation: basbeloppTriggered && spouseTotalNow === spouseMandatoryMinFromEstate ? "3 kap. 1 § 2 st. ÄB" : "3 kap. 1 § 1 st. ÄB",
+                        explanation: currentLang === 'sv'
+                            ? `Efterlevande make ärver gemensamma barns (och avstående särkullbarns) lotter med fri förfoganderätt enligt 3 kap. 1 § ÄB.${basbeloppTriggered ? ' Basbeloppsregeln garanterar maken minst 4 prisbasbelopp (' + formatSEK(4 * pbb) + ') inklusive egen egendom.' : ''}`
+                            : `The surviving spouse inherits the shares of joint children (and waiving separate children) with free disposal under Ch. 3 Sec. 1 ÄB.${basbeloppTriggered ? ' The Base Amount Rule guarantees at least 4 price base amounts (' + formatSEK(4 * pbb) + ') including their own property.' : ''}`,
+                        color: "#1e3a5f"
+                    });
+                }
+
+                // Add Child Cards
+                const childColors = ["#0d9488", "#0284c7", "#4f46e5", "#7c3aed", "#db2777", "#ea580c"];
+                activeChildren.forEach((child, idx) => {
+                    const immediate = childrenPayoutsNow[idx];
+                    const isDelayedToSpouse = maritalStatus === 'married' && (child.isJoint || child.waiveToSpouse || immediate < childArvslotter[idx] - 1);
+
+                    let expText = "";
+                    if (maritalStatus === 'married' && child.isJoint && immediate === 0) {
+                        expText = currentLang === 'sv'
+                            ? `Som gemensamt barn går ${child.name}s arvslott (${formatSEK(childArvslotter[idx])}) först till den efterlevande maken (3 kap. 1 § ÄB). Barnet får ut sitt arv som efterarv när båda makarna avlidit (3 kap. 2 § ÄB).`
+                            : `As a joint child, ${child.name}'s statutory share (${formatSEK(childArvslotter[idx])}) goes first to the surviving spouse (Ch. 3 Sec. 1 ÄB). The child receives delayed inheritance (efterarv) when both spouses have passed away (Ch. 3 Sec. 2 ÄB).`;
+                    } else if (maritalStatus === 'married' && !child.isJoint && !child.waiveToSpouse) {
+                        expText = currentLang === 'sv'
+                            ? `Som särkullbarn har ${child.name} rätt att få ut sitt arv direkt vid dödsfallet enligt 3 kap. 1 § 1 st. ÄB.${hasWill && claimLaglott ? ' Eftersom testamente finns utgår minst den skyddade laglotten (7 kap. 1 § ÄB).' : ''}`
+                            : `As a separate child (särkullbarn), ${child.name} has the right to receive their inheritance immediately upon death under Ch. 3 Sec. 1 ÄB.${hasWill && claimLaglott ? ' Due to the will, at least the protected laglott is paid out (Ch. 7 Sec. 1 ÄB).' : ''}`;
+                    } else {
+                        expText = currentLang === 'sv'
+                            ? `Bröstarvinge i första arvsklassen (2 kap. 1 § ÄB).${child.advanceAmount > 0 ? ' Hänsyn har tagits till mottaget förskott på arv om ' + formatSEK(child.advanceAmount) + ' enligt 6 kap. 1 & 5 §§ ÄB.' : ''}`
+                            : `Direct descendant in the 1st class (Ch. 2 Sec. 1 ÄB).${child.advanceAmount > 0 ? ' Adjusted for advance on inheritance of ' + formatSEK(child.advanceAmount) + ' under Ch. 6 Sec. 1 & 5 ÄB.' : ''}`;
+                    }
+
+                    let subNote = "";
+                    if (child.isDeceased && child.grandchildrenCount > 0) {
+                        const perGC = immediate / child.grandchildrenCount;
+                        subNote = currentLang === 'sv'
+                            ? `Istadarätt (2 kap. 1 § 2 st. ÄB): ${child.grandchildrenCount} barnbarn delar lika på grenen (${formatSEK(perGC)} var direkt).`
+                            : `Right of representation (Ch. 2 Sec. 1 Para. 2 ÄB): ${child.grandchildrenCount} grandchildren split this branch equally (${formatSEK(perGC)} each now).`;
+                    }
+
+                    payouts.push({
+                        name: child.name,
+                        role: child.isJoint && maritalStatus === 'married' ? dict.jointChildLabel : (!child.isJoint && maritalStatus === 'married' ? dict.sarkullChildLabel : (currentLang === 'sv' ? 'Bröstarvinge' : 'Direct Descendant')),
+                        amountNow: immediate,
+                        arvslott: childArvslotter[idx],
+                        laglott: childLaglotter[idx],
+                        citation: hasWill && claimLaglott ? "2 kap. 1 § & 7 kap. 1 § ÄB" : "2 kap. 1 § ÄB",
+                        explanation: expText,
+                        subNote: subNote,
+                        color: childColors[idx % childColors.length]
+                    });
+                });
+
+                // Add Will Beneficiary Card if Will receives > 0
+                if (hasWill && willTotalPayout > 0) {
+                    payouts.push({
+                        name: willBeneficiary,
+                        role: currentLang === 'sv' ? "Testamentstagare" : "Will Beneficiary",
+                        amountNow: willTotalPayout,
+                        arvslott: null,
+                        laglott: null,
+                        citation: claimLaglott ? "9 kap. 1 § & 7 kap. 3 § ÄB" : "9 kap. 1 § & 11 kap. ÄB",
+                        explanation: currentLang === 'sv'
+                            ? `Utgår enligt testamente.${claimLaglott ? ' Beloppet har begränsats (jämkats) så att det inte inkräktar på bröstarvingarnas laglotter (50 % av arvslotten enligt 7 kap. 1 & 3 §§ ÄB)' + (basbeloppTriggered ? ' eller makens basbeloppsskydd.' : '.') : ''}`
+                            : `Paid according to the will.${claimLaglott ? ' The bequest has been capped so as not to infringe upon the children\'s statutory share (laglott, 50% under Ch. 7 Sec. 1 & 3 ÄB)' + (basbeloppTriggered ? ' or the spouse\'s base amount rule.' : '.') : ''}`,
+                        color: "#c59b27"
+                    });
+                }
+
+            } else if (hasSecondClass) {
+                // ---------------------------------------------------------
+                // 2ND INHERITANCE CLASS (2 kap. 2 § ÄB)
+                // Note: No Laglott exists in 2nd class! A will can dispose of 100% (except spouse's 4x PBB).
+                // ---------------------------------------------------------
+                mainRuleCitation = maritalStatus === 'married' ? "3 kap. 1 & 2 §§ + 2 kap. 2 § ÄB" : "2 kap. 2 § ÄB";
+
+                // Compute 2nd class fractional distribution of the statutory estate
+                // Mother's half (50%) and Father's half (50%)
+                let shares2nd = {}; // key -> { name, ratio, citation }
+
+                // Mother's 50%
+                let motherSideTransferredToFather = false;
+                if (motherAlive) {
+                    shares2nd['mother'] = { name: dict.motherName, ratio: 0.5, citation: "2 kap. 2 § 1 st. ÄB" };
+                } else {
+                    const motherHeirsCount = fullSibs + matHalfSibs;
+                    if (motherHeirsCount > 0) {
+                        if (fullSibs > 0) {
+                            shares2nd['fullSibs'] = { name: `${dict.fullSiblingsName} (${fullSibs} st)`, ratio: 0.5 * (fullSibs / motherHeirsCount), citation: "2 kap. 2 § 2 st. ÄB" };
+                        }
+                        if (matHalfSibs > 0) {
+                            shares2nd['matHalf'] = { name: `${dict.matHalfSibsName} (${matHalfSibs} st)`, ratio: 0.5 * (matHalfSibs / motherHeirsCount), citation: "2 kap. 2 § 3 st. ÄB" };
+                        }
+                    } else {
+                        motherSideTransferredToFather = true;
+                    }
+                }
+
+                // Father's 50%
+                let fatherRatio = motherSideTransferredToFather ? 1.0 : 0.5;
+                if (fatherAlive) {
+                    shares2nd['father'] = { name: dict.fatherName, ratio: fatherRatio, citation: "2 kap. 2 § 1–2 st. ÄB" };
+                } else {
+                    const fatherHeirsCount = fullSibs + patHalfSibs;
+                    if (fatherHeirsCount > 0) {
+                        if (fullSibs > 0) {
+                            const addRatio = fatherRatio * (fullSibs / fatherHeirsCount);
+                            if (shares2nd['fullSibs']) {
+                                shares2nd['fullSibs'].ratio += addRatio;
+                            } else {
+                                shares2nd['fullSibs'] = { name: `${dict.fullSiblingsName} (${fullSibs} st)`, ratio: addRatio, citation: "2 kap. 2 § 2 st. ÄB" };
+                            }
+                        }
+                        if (patHalfSibs > 0) {
+                            shares2nd['patHalf'] = { name: `${dict.patHalfSibsName} (${patHalfSibs} st)`, ratio: fatherRatio * (patHalfSibs / fatherHeirsCount), citation: "2 kap. 2 § 3 st. ÄB" };
+                        }
+                    } else if (!motherSideTransferredToFather) {
+                        // Father's side is empty, transfer his 50% to Mother's side!
+                        Object.keys(shares2nd).forEach(k => {
+                            shares2nd[k].ratio *= 2;
+                        });
+                    }
+                }
+
+                // Apply Will first (2nd class has NO Laglott protection, only Spouse 4x PBB overrides Will)
+                let willTotalPayout = 0;
+                if (hasWill) {
+                    const maxForWill = Math.max(0, estateValue - spouseMandatoryMinFromEstate);
+                    const desiredWill = Math.min(estateValue, willLegat + Math.max(0, estateValue - willLegat) * willPercent);
+                    willTotalPayout = Math.min(desiredWill, maxForWill);
+                }
+
+                const remainingForHeirs = Math.max(0, estateValue - willTotalPayout);
+
+                if (maritalStatus === 'married') {
+                    // Surviving spouse inherits 100% of remainingForHeirs before 2nd class (3 kap. 1 § ÄB),
+                    // and 2nd class heirs receive Efterarv (3 kap. 2 § ÄB).
+                    payouts.push({
+                        name: dict.spouseName,
+                        role: currentLang === 'sv' ? "Efterlevande make (3 kap. 1 § ÄB)" : "Surviving Spouse (Ch. 3 Sec. 1 ÄB)",
+                        amountNow: remainingForHeirs,
+                        arvslott: remainingForHeirs,
+                        laglott: null,
+                        citation: "3 kap. 1 § ÄB",
+                        explanation: currentLang === 'sv'
+                            ? "När bröstarvingar saknas ärver efterlevande make hela kvarlåtenskapen (utöver ev. testamente). Den avlidnes arvingar i andra arvsklassen har rätt till efterarv när den efterlevande maken avlider (3 kap. 2 § ÄB)."
+                            : "When there are no direct descendants, the surviving spouse inherits the estate (subject to any will). Heirs in the 2nd inheritance class have the right to delayed inheritance (efterarv) under Ch. 3 Sec. 2 ÄB.",
+                        color: "#1e3a5f"
+                    });
+
+                    Object.values(shares2nd).forEach(item => {
+                        efterarvItems.push({
+                            name: item.name,
+                            amount: remainingForHeirs * item.ratio,
+                            citation: "3 kap. 2 § & " + item.citation,
+                            type: currentLang === 'sv' ? "Andra arvsklassen (Efterarv)" : "2nd Inheritance Class (Delayed)"
+                        });
+                    });
+                } else {
+                    const colors2 = ["#0284c7", "#0d9488", "#4f46e5", "#7c3aed"];
+                    let cIdx = 0;
+                    Object.values(shares2nd).forEach(item => {
+                        payouts.push({
+                            name: item.name,
+                            role: currentLang === 'sv' ? "Arvinge i andra arvsklassen" : "2nd Class Heir",
+                            amountNow: remainingForHeirs * item.ratio,
+                            arvslott: estateValue * item.ratio,
+                            laglott: null,
+                            citation: item.citation,
+                            explanation: currentLang === 'sv'
+                                ? `Ärver ${formatPercent(item.ratio)} enligt andra arvsklassen (föräldrar och syskon, 2 kap. 2 § ÄB). Notera att andra arvsklassen saknar laglottsskydd mot testamente.`
+                                : `Inherits ${formatPercent(item.ratio)} under the 2nd inheritance class (parents and siblings, Ch. 2 Sec. 2 ÄB). Note that the 2nd class does not have laglott protection against a will.`,
+                            color: colors2[cIdx++ % colors2.length]
+                        });
+                    });
+                }
+
+                if (hasWill && willTotalPayout > 0) {
+                    payouts.push({
+                        name: willBeneficiary,
+                        role: currentLang === 'sv' ? "Testamentstagare" : "Will Beneficiary",
+                        amountNow: willTotalPayout,
+                        arvslott: null,
+                        laglott: null,
+                        citation: "9 kap. 1 § ÄB",
+                        explanation: currentLang === 'sv'
+                            ? "Eftersom det inte finns några bröstarvingar (barn) finns det ingen laglott som begränsar testamentet. Hela kvarlåtenskapen kan testamenteras fritt (med förbehåll för makes basbeloppsregel)."
+                            : "Because there are no direct descendants (children), there is no statutory laglott restricting the will.",
+                        color: "#c59b27"
+                    });
+                }
+
+            } else {
+                // ---------------------------------------------------------
+                // 3RD INHERITANCE CLASS (2 kap. 3 § ÄB) OR ALLMÄNNA ARVSFONDEN (5 kap. 1 § ÄB)
+                // Note: If Married, Surviving Spouse inherits 100% with FULL ÄGANDERÄTT (no efterarv for 3rd class per 3 kap. 2 § ÄB!)
+                // ---------------------------------------------------------
+                let willTotalPayout = 0;
+                if (hasWill) {
+                    const maxForWill = Math.max(0, estateValue - spouseMandatoryMinFromEstate);
+                    const desiredWill = Math.min(estateValue, willLegat + Math.max(0, estateValue - willLegat) * willPercent);
+                    willTotalPayout = Math.min(desiredWill, maxForWill);
+                }
+                const remainingForHeirs = Math.max(0, estateValue - willTotalPayout);
+
+                if (maritalStatus === 'married') {
+                    mainRuleCitation = "3 kap. 1 § & 3 kap. 2 § e contrario ÄB";
+                    payouts.push({
+                        name: dict.spouseName,
+                        role: currentLang === 'sv' ? "Efterlevande make (Full äganderätt)" : "Surviving Spouse (Full Ownership)",
+                        amountNow: remainingForHeirs,
+                        arvslott: remainingForHeirs,
+                        laglott: null,
+                        citation: "3 kap. 1 & 2 §§ ÄB",
+                        explanation: currentLang === 'sv'
+                            ? "Eftersom det inte finns några arvingar i första eller andra arvsklassen ärver efterlevande make allt utan efterarvsrätt för tredje arvsklassen (mor-/farföräldrar har inte efterarvsrätt enligt 3 kap. 2 § ÄB)."
+                            : "Since there are no heirs in the 1st or 2nd class, the surviving spouse inherits everything in full ownership (3rd class relatives do not have the right to delayed inheritance under Ch. 3 Sec. 2 ÄB).",
+                        color: "#1e3a5f"
+                    });
+                } else {
+                    // Check 3rd class members
+                    const mormor = document.getElementById('mormorAlive').checked;
+                    const morfar = document.getElementById('morfarAlive').checked;
+                    const matAunts = Math.max(0, parseInt(document.getElementById('maternalAuntsInput').value) || 0);
+
+                    const farmor = document.getElementById('farmorAlive').checked;
+                    const farfar = document.getElementById('farfarAlive').checked;
+                    const patAunts = Math.max(0, parseInt(document.getElementById('paternalAuntsInput').value) || 0);
+
+                    const hasMaternalSide = mormor || morfar || matAunts > 0;
+                    const hasPaternalSide = farmor || farfar || patAunts > 0;
+
+                    if (hasMaternalSide || hasPaternalSide) {
+                        mainRuleCitation = "2 kap. 3 § ÄB";
+                        const matSideTotalRatio = hasMaternalSide && hasPaternalSide ? 0.5 : (hasMaternalSide ? 1.0 : 0);
+                        const patSideTotalRatio = hasMaternalSide && hasPaternalSide ? 0.5 : (hasPaternalSide ? 1.0 : 0);
+
+                        if (hasMaternalSide) {
+                            if (mormor && morfar) {
+                                payouts.push({ name: dict.mormorName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (matSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 1 st. ÄB", explanation: "Ärver hälften av morslinjens lott.", color: "#0284c7" });
+                                payouts.push({ name: dict.morfarName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (matSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 1 st. ÄB", explanation: "Ärver hälften av morslinjens lott.", color: "#0d9488" });
+                            } else if (mormor && !morfar) {
+                                if (matAunts > 0) {
+                                    payouts.push({ name: dict.mormorName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (matSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 1 st. ÄB", explanation: "Ärver sin lott på mors sida.", color: "#0284c7" });
+                                    payouts.push({ name: `${dict.matAuntsName} (${matAunts} st)`, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (matSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Delar på avlidne morfars lott.", color: "#0d9488" });
+                                } else {
+                                    payouts.push({ name: dict.mormorName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * matSideTotalRatio, arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Ärver hela morslinjens lott.", color: "#0284c7" });
+                                }
+                            } else if (!mormor && morfar) {
+                                if (matAunts > 0) {
+                                    payouts.push({ name: dict.morfarName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (matSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 1 st. ÄB", explanation: "Ärver sin lott på mors sida.", color: "#0d9488" });
+                                    payouts.push({ name: `${dict.matAuntsName} (${matAunts} st)`, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (matSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Delar på avlidna mormors lott.", color: "#0284c7" });
+                                } else {
+                                    payouts.push({ name: dict.morfarName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * matSideTotalRatio, arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Ärver hela morslinjens lott.", color: "#0d9488" });
+                                }
+                            } else {
+                                payouts.push({ name: `${dict.matAuntsName} (${matAunts} st)`, role: "Tredje arvsklassen", amountNow: remainingForHeirs * matSideTotalRatio, arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Mostrar och morbröder delar lika på morslinjens lott.", color: "#0284c7" });
+                            }
+                        }
+
+                        if (hasPaternalSide) {
+                            if (farmor && farfar) {
+                                payouts.push({ name: dict.farmorName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (patSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 1 st. ÄB", explanation: "Ärver hälften av farslinjens lott.", color: "#4f46e5" });
+                                payouts.push({ name: dict.farfarName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (patSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 1 st. ÄB", explanation: "Ärver hälften av farslinjens lott.", color: "#7c3aed" });
+                            } else if (farmor && !farfar) {
+                                if (patAunts > 0) {
+                                    payouts.push({ name: dict.farmorName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (patSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 1 st. ÄB", explanation: "Ärver sin lott på fars sida.", color: "#4f46e5" });
+                                    payouts.push({ name: `${dict.patAuntsName} (${patAunts} st)`, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (patSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Delar på avlidne farfars lott.", color: "#7c3aed" });
+                                } else {
+                                    payouts.push({ name: dict.farmorName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * patSideTotalRatio, arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Ärver hela farslinjens lott.", color: "#4f46e5" });
+                                }
+                            } else if (!farmor && farfar) {
+                                if (patAunts > 0) {
+                                    payouts.push({ name: dict.farfarName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (patSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 1 st. ÄB", explanation: "Ärver sin lott på fars sida.", color: "#7c3aed" });
+                                    payouts.push({ name: `${dict.patAuntsName} (${patAunts} st)`, role: "Tredje arvsklassen", amountNow: remainingForHeirs * (patSideTotalRatio / 2), arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Delar på avlidna farmors lott.", color: "#4f46e5" });
+                                } else {
+                                    payouts.push({ name: dict.farfarName, role: "Tredje arvsklassen", amountNow: remainingForHeirs * patSideTotalRatio, arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Ärver hela farslinjens lott.", color: "#7c3aed" });
+                                }
+                            } else {
+                                payouts.push({ name: `${dict.patAuntsName} (${patAunts} st)`, role: "Tredje arvsklassen", amountNow: remainingForHeirs * patSideTotalRatio, arvslott: null, laglott: null, citation: "2 kap. 3 § 2 st. ÄB", explanation: "Fastrar och farbröder delar lika på farslinjens lott.", color: "#4f46e5" });
+                            }
+                        }
+                    } else if (remainingForHeirs > 0 || !hasWill) {
+                        // Allmänna arvsfonden (5 kap. 1 § ÄB)
+                        mainRuleCitation = "5 kap. 1 § ÄB";
+                        payouts.push({
+                            name: dict.arvsfondenName,
+                            role: currentLang === 'sv' ? "Lagstadgad mottagare när arvingar saknas" : "Statutory recipient when no legal heirs exist",
+                            amountNow: remainingForHeirs,
+                            arvslott: remainingForHeirs,
+                            laglott: null,
+                            citation: "5 kap. 1 § ÄB",
+                            explanation: currentLang === 'sv'
+                                ? "Om det inte finns några arvingar i första, andra eller tredje arvsklassen (och inget testamente som fördelar hela kvarlåtenskapen) tillfaller arvet Allmänna arvsfonden."
+                                : "If there are no surviving legal heirs in the 1st, 2nd, or 3rd class (and no will disposing of the estate), the inheritance goes to the Swedish Inheritance Fund.",
+                            color: "#64748b"
+                        });
+                    }
+                }
+
+                if (hasWill && willTotalPayout > 0) {
+                    payouts.push({
+                        name: willBeneficiary,
+                        role: currentLang === 'sv' ? "Testamentstagare" : "Will Beneficiary",
+                        amountNow: willTotalPayout,
+                        arvslott: null,
+                        laglott: null,
+                        citation: "9 kap. 1 § ÄB",
+                        explanation: currentLang === 'sv'
+                            ? "Utgår enligt testamente utan begränsning av laglott."
+                            : "Paid according to the will without laglott restrictions.",
+                        color: "#c59b27"
+                    });
+                }
+            }
+
+            // ---------------------------------------------------------
+            // STEP C: RENDER VISUALS & EXPLANATIONS
+            // ---------------------------------------------------------
+            document.getElementById('activeRuleBadge').innerText = mainRuleCitation;
+
+            // Render Stacked Bar & Legend
+            const barContainer = document.getElementById('distributionBar');
+            const legendContainer = document.getElementById('distributionLegend');
+            const activePayouts = payouts.filter(p => p.amountNow > 0);
+
+            if (estateValue > 0 && activePayouts.length > 0) {
+                barContainer.innerHTML = activePayouts.map(p => {
+                    const pct = Math.max(2, (p.amountNow / estateValue) * 100);
+                    return `<div style="width: ${pct}%; background-color: ${p.color};" class="h-full first:rounded-l-full last:rounded-r-full transition-all-smooth" title="${p.name}: ${formatSEK(p.amountNow)}"></div>`;
+                }).join('');
+
+                legendContainer.innerHTML = activePayouts.map(p => `
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: ${p.color};"></span>
+                        <span class="font-medium text-slate-800">${p.name}:</span>
+                        <span>${formatPercent(p.amountNow / estateValue)}</span>
+                    </div>
+                `).join('');
+            } else {
+                barContainer.innerHTML = `<div class="w-full h-full bg-slate-300 rounded-full"></div>`;
+                legendContainer.innerHTML = '';
+            }
+
+            // Generate Plain-Language Summary Box
+            const summaryBox = document.getElementById('plainLanguageSummary');
+            let summaryHTML = "";
+            if (maritalStatus === 'married' && hasFirstClass) {
+                const jointCount = activeChildren.filter(c => c.isJoint).length;
+                const sarkullCount = activeChildren.filter(c => !c.isJoint).length;
+                if (jointCount > 0 && sarkullCount === 0 && !hasWill) {
+                    summaryHTML = currentLang === 'sv'
+                        ? `<p><strong>Sammanfattning i korthet:</strong> Eftersom den avlidne var gift och endast hade gemensamma barn, ärver <strong>efterlevande make 100 % (${formatSEK(estateValue)})</strong> med fri förfoganderätt enligt <strong>3 kap. 1 § ÄB</strong>. Barnen får vänta på sitt arv (efterarv) tills båda föräldrarna har gått bort.</p>`
+                        : `<p><strong>Summary in brief:</strong> Because the deceased was married and only had joint children, the <strong>surviving spouse inherits 100% (${formatSEK(estateValue)})</strong> with free disposal under <strong>Ch. 3 Sec. 1 ÄB</strong>. The children receive delayed inheritance (efterarv) when both parents have passed away.</p>`;
+                } else if (sarkullCount > 0) {
+                    summaryHTML = currentLang === 'sv'
+                        ? `<p><strong>Sammanfattning i korthet:</strong> Det finns <strong>särkullbarn</strong> (barn utom äktenskapet). Enligt <strong>3 kap. 1 § ÄB</strong> har särkullbarn rätt att få ut sitt arv direkt vid dödsfallet, medan gemensamma barns andelar går till den efterlevande maken med efterarvsrätt.</p>`
+                        : `<p><strong>Summary in brief:</strong> There are <strong>separate children (särkullbarn)</strong>. Under <strong>Ch. 3 Sec. 1 ÄB</strong>, separate children are entitled to claim their inheritance immediately, whereas joint children's shares go to the surviving spouse with delayed inheritance rights.</p>`;
+                } else {
+                    summaryHTML = currentLang === 'sv'
+                        ? `<p><strong>Sammanfattning i korthet:</strong> Kvarlåtenskapen fördelas med hänsyn till både <strong>testamente (9–11 kap. ÄB)</strong>, <strong>bröstarvingars laglott (7 kap. ÄB)</strong> och <strong>makes arvsrätt (3 kap. ÄB)</strong>.</p>`
+                        : `<p><strong>Summary in brief:</strong> The estate is distributed accounting for the <strong>will (Ch. 9–11 ÄB)</strong>, <strong>children's protected statutory share / laglott (Ch. 7 ÄB)</strong>, and <strong>spousal inheritance rules (Ch. 3 ÄB)</strong>.</p>`;
+                }
+            } else if (maritalStatus === 'sambo') {
+                summaryHTML = currentLang === 'sv'
+                    ? `<p><strong>Sammanfattning i korthet:</strong> En sambo har ingen legal arvsrätt enligt Ärvdabalken. ${hasWill ? 'Eftersom det finns ett testamente får sambon del av arvet, men bröstarvingarna har rätt att få ut minst sin <strong>laglott (50 % av arvslotten enligt 7 kap. 1 § ÄB)</strong> direkt.' : 'Utan testamente går hela kvarlåtenskapen till den avlidnes arvingar enligt lag.'}</p>`
+                    : `<p><strong>Summary in brief:</strong> A cohabitant (sambo) has no statutory right to inherit under the Inheritance Code. ${hasWill ? 'Because there is a will, the cohabitant receives a bequest, but direct descendants are entitled to claim at least their <strong>laglott (50% under Ch. 7 Sec. 1 ÄB)</strong> immediately.' : 'Without a will, 100% of the estate goes to the deceased\'s legal heirs.'}</p>`;
+            } else {
+                summaryHTML = currentLang === 'sv'
+                    ? `<p><strong>Sammanfattning i korthet:</strong> Den avlidne var ensamstående/ogift. Arvet fördelas direkt till arvingarna enligt <strong>${mainRuleCitation}</strong>${hasWill ? ' med beaktande av det angivna testamentet' : ''}.</p>`
+                    : `<p><strong>Summary in brief:</strong> The deceased was unmarried. The estate is distributed directly to the heirs under <strong>${mainRuleCitation}</strong>${hasWill ? ' taking into account the specified will' : ''}.</p>`;
+            }
+            summaryBox.innerHTML = summaryHTML;
+
+            // Render Beneficiary Cards
+            const benContainer = document.getElementById('beneficiariesContainer');
+            benContainer.innerHTML = payouts.map(p => {
+                const pct = estateValue > 0 ? formatPercent(p.amountNow / estateValue) : '0 %';
+                return `
+                    <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2.5">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-3 h-8 rounded-full shrink-0" style="background-color: ${p.color};"></span>
+                                <div>
+                                    <h5 class="font-bold text-slate-900 text-sm">${p.name}</h5>
+                                    <span class="text-[11px] text-slate-500 font-medium block">${p.role}</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-slate-400 font-medium">${dict.paidNowLabel} (${pct})</div>
+                                <div class="text-base font-extrabold text-slate-900">${formatSEK(p.amountNow)}</div>
+                            </div>
+                        </div>
+
+                        ${(p.arvslott !== null || p.laglott !== null) ? `
+                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-[11px]">
+                                ${p.arvslott !== null ? `
+                                    <div class="bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200/60">
+                                        <span class="text-slate-500 block">${dict.arvslottLabel}:</span>
+                                        <span class="font-bold text-slate-800">${formatSEK(p.arvslott)}</span>
+                                    </div>
+                                ` : ''}
+                                ${p.laglott !== null ? `
+                                    <div class="bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200/60">
+                                        <span class="text-slate-500 block">${dict.laglottLabel} (50 %):</span>
+                                        <span class="font-bold text-slate-800">${formatSEK(p.laglott)}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${p.subNote ? `
+                            <div class="text-xs bg-indigo-50/70 text-indigo-950 border border-indigo-200/70 px-3 py-1.5 rounded-lg font-medium">
+                                ${p.subNote}
+                            </div>
+                        ` : ''}
+
+                        <div class="pt-1 flex items-start justify-between gap-2 text-xs text-slate-600 leading-relaxed">
+                            <p>${p.explanation}</p>
+                            <span class="shrink-0 text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200">${p.citation}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Render Efterarv Section if applicable
+            const efterarvSec = document.getElementById('efterarvSection');
+            if (efterarvItems.length > 0 && estateValue > 0) {
+                efterarvSec.classList.remove('hidden');
+                const totalSpousePool = spouseProperty + (payouts.find(p => p.name === dict.spouseName)?.amountNow || 0);
+
+                document.getElementById('efterarvExplanation').innerHTML = currentLang === 'sv'
+                    ? `Eftersom efterlevande make ärver med <em>fri förfoganderätt</em> har nedanstående arvingar rätt till <strong>efterarv</strong> (en kvotdel i efterlevande makens framtida dödsbo enligt 3 kap. 2 § ÄB) när även den efterlevande maken avlider:`
+                    : `Because the surviving spouse inherits with <em>free disposal (fri förfoganderätt)</em>, the following heirs hold a statutory right to <strong>delayed inheritance (efterarv)</strong> as a fractional share of the surviving spouse's future estate when they pass away (Ch. 3 Sec. 2 ÄB):`;
+
+                document.getElementById('efterarvList').innerHTML = efterarvItems.map(item => {
+                    const kvotRatio = totalSpousePool > 0 ? item.amount / totalSpousePool : 0.5;
+                    return `
+                        <div class="flex items-center justify-between py-1 border-b border-slate-800 last:border-0">
+                            <div>
+                                <span class="font-bold text-white">${item.name}</span>
+                                <span class="text-slate-400 block text-[11px]">${item.type} (${item.citation})</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-gold-500 font-bold block">${formatSEK(item.amount)}</span>
+                                <span class="text-[11px] text-slate-400">${currentLang === 'sv' ? 'Andel i makens totala bo:' : 'Share of spouse\'s total pool:'} ${formatPercent(kvotRatio)}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                efterarvSec.classList.add('hidden');
+            }
+
+            lucide.createIcons();
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setMaritalStatus('married');
+            renderChildrenList();
+            recalculate();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
