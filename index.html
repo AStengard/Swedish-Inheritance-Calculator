@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arvskalkylator | Svensk Arvsrätt (Ärvdabalken) — By Alfred Stengard</title>
+    <!-- Favicon: White notepad icon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' stroke='%23152943' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='3' width='16' height='19' rx='2' fill='white'/%3E%3Cpath d='M8 2v3'/%3E%3Cpath d='M12 2v3'/%3E%3Cpath d='M16 2v3'/%3E%3Cline x1='8' y1='10' x2='16' y2='10'/%3E%3Cline x1='8' y1='14' x2='16' y2='14'/%3E%3Cline x1='8' y1='18' x2='13' y2='18'/%3E%3C/svg%3E">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Merriweather for Scandinavian Legal-Tech feel -->
@@ -123,13 +125,13 @@
     <!-- TOP NAVIGATION BAR -->
     <header class="bg-nordic-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-gold-500/20 border border-gold-500/40 p-2 rounded-lg text-gold-500">
+            <div onclick="goToStep(0)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')goToStep(0)" class="flex items-center space-x-3 cursor-pointer group hover:opacity-90 transition" title="Gå till startsidan">
+                <div class="bg-gold-500/20 border border-gold-500/40 p-2 rounded-lg text-gold-500 group-hover:bg-gold-500/30 transition">
                     <i data-lucide="scale" class="w-6 h-6"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2.5">
-                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white" data-i18n="appTitle">Svensk Arvskalkylator</h1>
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white group-hover:text-gold-500 transition-colors" data-i18n="appTitle">Svensk Arvskalkylator</h1>
                         <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-nordic-700 text-slate-200 border border-slate-600">
                             SFS 1958:637
                         </span>
@@ -404,7 +406,7 @@
                         <span data-i18n="prevBtn">Tillbaka</span>
                     </button>
                     <button type="button" onclick="goToStep(2)" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-nordic-800 hover:bg-nordic-700 text-white shadow-sm transition cursor-pointer">
-                        <span data-i18n="nextBtn">Nästa fråga</span>
+                        <span data-i18n="nextBtn">Nästa</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -552,7 +554,7 @@
                         <span data-i18n="prevBtn">Tillbaka</span>
                     </button>
                     <button type="button" onclick="goToStep(3)" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-nordic-800 hover:bg-nordic-700 text-white shadow-sm transition cursor-pointer">
-                        <span data-i18n="nextBtn">Nästa fråga</span>
+                        <span data-i18n="nextBtn">Nästa</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -633,10 +635,10 @@
                             <div class="flex items-start justify-between gap-3">
                                 <div>
                                     <label for="enableUniversalCheck" class="text-xs font-bold text-slate-900 cursor-pointer flex items-center gap-1.5">
-                                        <span data-i18n="universalToggleTitle">B. Procent av kakan (Universellt förordnande – 11 kap. 10 § ÄB)</span>
+                                        <span data-i18n="universalToggleTitle">B. Andel av återstående kvarlåtenskap (Universellt förordnande – 11 kap. 10 § ÄB)</span>
                                     </label>
                                     <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed" data-i18n="universalToggleDesc">
-                                        <strong>Vad betyder detta?</strong> Aktivera detta om testamentet säger att mottagaren ska få en viss <em>procentandel</em> (t.ex. 50 % eller "allt som finns kvar") av kvarlåtenskapen efter att eventuella fasta belopp (legat) har dragits av.
+                                        <strong>Vad innebär detta?</strong> Aktivera detta om testamentet anger att mottagaren ska erhålla en viss <em>kvotdel eller procentandel</em> (t.ex. 50 % eller hela återstoden) av den kvarlåtenskap som återstår sedan eventuella legat har skiftats ut.
                                     </p>
                                 </div>
                                 <input type="checkbox" id="enableUniversalCheck" onchange="toggleWillSubOptions()" class="mt-0.5 w-4 h-4 rounded text-nordic-800 cursor-pointer shrink-0">
@@ -695,9 +697,9 @@
                 </button>
 
                 <div class="flex items-center gap-2.5">
-                    <button type="button" onclick="goToStep(0)" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-2xs">
+                    <button type="button" onclick="resetAndRestartWizard()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-2xs">
                         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                        <span data-i18n="startOverBtn">Börja om</span>
+                        <span data-i18n="startOverBtn">Gör om formuläret</span>
                     </button>
                     <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-nordic-800 hover:bg-nordic-700 text-white shadow-sm transition cursor-pointer">
                         <i data-lucide="printer" class="w-4 h-4"></i>
@@ -789,6 +791,24 @@
                             <span data-i18n="cardFooterPrivacy">Uträkningen sker 100 % lokalt på din dator – ingen data skickas över internet.</span>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Bottom Restart / Redo Action Box (No Print) -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 no-print">
+                <div>
+                    <h4 class="font-bold text-slate-900 text-sm" data-i18n="redoPromptTitle">Vill du göra en ny arvsberäkning?</h4>
+                    <p class="text-xs text-slate-500 mt-0.5" data-i18n="redoPromptSub">Du kan antingen gå tillbaka och justera dina nuvarande svar eller nollställa formuläret helt.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
+                    <button type="button" onclick="goToStep(1)" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition cursor-pointer">
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                        <span data-i18n="editAnswersBtn">Ändra svar</span>
+                    </button>
+                    <button type="button" onclick="resetAndRestartWizard()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gold-500 hover:bg-gold-600 text-slate-950 shadow-sm transition cursor-pointer">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span data-i18n="redoFormBtnLarge">Gör om formuläret från början</span>
+                    </button>
                 </div>
             </div>
 
@@ -903,10 +923,13 @@
                 startFeat3Desc: "Svara på en fråga i taget och få ett färdigt fördelningsbesked som PDF.",
                 backToStartText: "Startsida",
                 prevBtn: "Tillbaka",
-                nextBtn: "Nästa fråga",
+                nextBtn: "Nästa",
                 showResultBtn: "Beräkna & Visa Resultat",
                 editAnswersBtn: "Ändra svar",
-                startOverBtn: "Börja om",
+                startOverBtn: "Gör om formuläret",
+                redoPromptTitle: "Vill du göra en ny arvsberäkning?",
+                redoPromptSub: "Du kan antingen gå tillbaka och justera dina nuvarande svar eller nollställa formuläret helt.",
+                redoFormBtnLarge: "Gör om formuläret från början",
                 printResultBtn: "Skriv ut / Spara som PDF",
                 presetsLabel: "Eller testa ett färdigt typfall direkt:",
                 preset1: "Gift par med 2 gemensamma barn",
@@ -963,8 +986,8 @@
                 legatToggleTitle: "A. Specifikt belopp eller sak (Legat – 11 kap. 2 § ÄB)",
                 legatToggleDesc: "Används om testamentet ger en bestämd summa pengar (t.ex. 100 000 kr) eller en specifik sak innan resten av arvet fördelas.",
                 willLegatLabel: "Belopp för legat (SEK)",
-                universalToggleTitle: "B. Procent av kakan (Universellt förordnande – 11 kap. 10 § ÄB)",
-                universalToggleDesc: "<strong>Vad betyder detta?</strong> Aktivera detta om testamentet säger att mottagaren ska få en viss <em>procentandel</em> (t.ex. 50 % eller \"allt som finns kvar\") av kvarlåtenskapen efter att eventuella fasta belopp (legat) har dragits av.",
+                universalToggleTitle: "B. Andel av återstående kvarlåtenskap (Universellt förordnande – 11 kap. 10 § ÄB)",
+                universalToggleDesc: "<strong>Vad innebär detta?</strong> Aktivera detta om testamentet anger att mottagaren ska erhålla en viss <em>kvotdel eller procentandel</em> (t.ex. 50 % eller hela återstoden) av den kvarlåtenskap som återstår sedan eventuella legat har skiftats ut.",
                 willShareLabel: "Andel av återstående kvarlåtenskap:",
                 willHalfHint: "50 % (halva boet)",
                 willAllHint: "100 % (hela återstående boet)",
@@ -1043,10 +1066,13 @@
                 startFeat3Desc: "Answer one question at a time and get a complete distribution report as a PDF.",
                 backToStartText: "Start Page",
                 prevBtn: "Back",
-                nextBtn: "Next Question",
+                nextBtn: "Next",
                 showResultBtn: "Calculate & View Results",
                 editAnswersBtn: "Edit Answers",
-                startOverBtn: "Start Over",
+                startOverBtn: "Redo Form",
+                redoPromptTitle: "Would you like to start a new calculation?",
+                redoPromptSub: "You can either go back and adjust your current answers or reset the form completely.",
+                redoFormBtnLarge: "Redo Form from the Beginning",
                 printResultBtn: "Print / Save as PDF",
                 presetsLabel: "Or try a common scenario right away:",
                 preset1: "Married couple with 2 joint children",
@@ -1103,8 +1129,8 @@
                 legatToggleTitle: "A. Specific monetary amount or item (Legat – Ch. 11 Sec. 2 ÄB)",
                 legatToggleDesc: "Used if the will grants a fixed sum of money (e.g. 100,000 SEK) or specific item before the rest of the estate is divided.",
                 willLegatLabel: "Legacy amount (SEK)",
-                universalToggleTitle: "B. Percentage of remaining estate (Universellt förordnande – Ch. 11 Sec. 10 ÄB)",
-                universalToggleDesc: "<strong>What does this mean?</strong> Enable this if the will states that the beneficiary receives a <em>percentage</em> (e.g. 50% or \"everything left\") of what remains after any fixed legacies have been paid out.",
+                universalToggleTitle: "B. Share of remaining estate (Universellt förordnande – Ch. 11 Sec. 10 ÄB)",
+                universalToggleDesc: "<strong>What does this mean?</strong> Enable this if the will specifies that the beneficiary shall receive a <em>fractional share or percentage</em> (e.g. 50% or the entire remainder) of the estate remaining after any specific legacies have been distributed.",
                 willShareLabel: "Share of remaining estate:",
                 willHalfHint: "50% (half of remaining)",
                 willAllHint: "100% (entire remaining estate)",
@@ -1178,6 +1204,32 @@
         // 3. WIZARD NAVIGATION & UI HANDLERS
         // ==========================================
         function startWizard() {
+            goToStep(1);
+        }
+
+        function resetAndRestartWizard() {
+            document.getElementById('estateValueInput').value = 1200000;
+            document.getElementById('spousePropertyInput').value = 1200000;
+            document.getElementById('pbbInput').value = 59200;
+            document.getElementById('hasWillToggle').checked = false;
+            document.getElementById('enableLegatCheck').checked = false;
+            document.getElementById('enableUniversalCheck').checked = false;
+            document.getElementById('willLegatAmount').value = 100000;
+            document.getElementById('willUniversalPercent').value = 100;
+            document.getElementById('willPercentDisplay').innerText = '100 %';
+            document.getElementById('claimLaglottCheck').checked = true;
+
+            children = [
+                { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 },
+                { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 }
+            ];
+            nextChildId = 3;
+
+            setMaritalStatus('married');
+            toggleWillSection();
+            renderChildrenList();
+            syncWillTargetOptions();
+            recalculate();
             goToStep(1);
         }
 
