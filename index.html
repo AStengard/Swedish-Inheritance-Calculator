@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arvskalkylator | Svensk Arvsrätt (Ärvdabalken) — By Alfred Stengard</title>
-    <!-- Favicon: White notepad icon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' stroke='%23152943' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='3' width='16' height='19' rx='2' fill='white'/%3E%3Cpath d='M8 2v3'/%3E%3Cpath d='M12 2v3'/%3E%3Cpath d='M16 2v3'/%3E%3Cline x1='8' y1='10' x2='16' y2='10'/%3E%3Cline x1='8' y1='14' x2='16' y2='14'/%3E%3Cline x1='8' y1='18' x2='13' y2='18'/%3E%3C/svg%3E">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Merriweather for Scandinavian Legal-Tech feel -->
@@ -125,13 +123,13 @@
     <!-- TOP NAVIGATION BAR -->
     <header class="bg-nordic-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
-            <div onclick="goToStep(0)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')goToStep(0)" class="flex items-center space-x-3 cursor-pointer group hover:opacity-90 transition" title="Gå till startsidan">
+            <div onclick="goToStep(0)" class="flex items-center space-x-3 cursor-pointer group" title="Gå till startsidan">
                 <div class="bg-gold-500/20 border border-gold-500/40 p-2 rounded-lg text-gold-500 group-hover:bg-gold-500/30 transition">
                     <i data-lucide="scale" class="w-6 h-6"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2.5">
-                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white group-hover:text-gold-500 transition-colors" data-i18n="appTitle">Svensk Arvskalkylator</h1>
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white group-hover:text-gold-500 transition" data-i18n="appTitle">Svensk Arvskalkylator</h1>
                         <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-nordic-700 text-slate-200 border border-slate-600">
                             SFS 1958:637
                         </span>
@@ -635,10 +633,10 @@
                             <div class="flex items-start justify-between gap-3">
                                 <div>
                                     <label for="enableUniversalCheck" class="text-xs font-bold text-slate-900 cursor-pointer flex items-center gap-1.5">
-                                        <span data-i18n="universalToggleTitle">B. Andel av återstående kvarlåtenskap (Universellt förordnande – 11 kap. 10 § ÄB)</span>
+                                        <span data-i18n="universalToggleTitle">B. Procent av återstående kvarlåtenskap (Universellt förordnande – 11 kap. 10 § ÄB)</span>
                                     </label>
                                     <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed" data-i18n="universalToggleDesc">
-                                        <strong>Vad innebär detta?</strong> Aktivera detta om testamentet anger att mottagaren ska erhålla en viss <em>kvotdel eller procentandel</em> (t.ex. 50 % eller hela återstoden) av den kvarlåtenskap som återstår sedan eventuella legat har skiftats ut.
+                                        <strong>Vad betyder detta?</strong> Aktivera detta om testamentet anger att mottagaren ska ärva en viss <em>procentandel</em> (t.ex. 50 % eller 100 %) av kvarlåtenskapen som återstår efter att eventuella legat har delats ut.
                                     </p>
                                 </div>
                                 <input type="checkbox" id="enableUniversalCheck" onchange="toggleWillSubOptions()" class="mt-0.5 w-4 h-4 rounded text-nordic-800 cursor-pointer shrink-0">
@@ -697,9 +695,9 @@
                 </button>
 
                 <div class="flex items-center gap-2.5">
-                    <button type="button" onclick="resetAndRestartWizard()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-2xs">
+                    <button type="button" onclick="goToStep(0)" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-2xs">
                         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                        <span data-i18n="startOverBtn">Gör om formuläret</span>
+                        <span data-i18n="startOverBtn">Börja om</span>
                     </button>
                     <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-nordic-800 hover:bg-nordic-700 text-white shadow-sm transition cursor-pointer">
                         <i data-lucide="printer" class="w-4 h-4"></i>
@@ -794,24 +792,6 @@
                 </div>
             </div>
 
-            <!-- Bottom Restart / Redo Action Box (No Print) -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 no-print">
-                <div>
-                    <h4 class="font-bold text-slate-900 text-sm" data-i18n="redoPromptTitle">Vill du göra en ny arvsberäkning?</h4>
-                    <p class="text-xs text-slate-500 mt-0.5" data-i18n="redoPromptSub">Du kan antingen gå tillbaka och justera dina nuvarande svar eller nollställa formuläret helt.</p>
-                </div>
-                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
-                    <button type="button" onclick="goToStep(1)" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition cursor-pointer">
-                        <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-                        <span data-i18n="editAnswersBtn">Ändra svar</span>
-                    </button>
-                    <button type="button" onclick="resetAndRestartWizard()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gold-500 hover:bg-gold-600 text-slate-950 shadow-sm transition cursor-pointer">
-                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                        <span data-i18n="redoFormBtnLarge">Gör om formuläret från början</span>
-                    </button>
-                </div>
-            </div>
-
             <!-- EDUCATIONAL GUIDE FOR NON-LAWYERS (Shown below results) -->
             <section class="pt-8 border-t border-slate-200 no-print">
                 <div class="max-w-3xl mb-6">
@@ -851,6 +831,14 @@
                             Större gåvor som en förälder ger till ett barn under sin livstid räknas som huvudregel som förskott på arv. Vid beräkningen läggs förskottets värde fiktivt tillbaka till kvarlåtenskapen innan lotterna delas, och dras sedan av från mottagarens lott.
                         </p>
                     </div>
+                </div>
+
+                <!-- Bottom Reset / Start Over Button -->
+                <div class="mt-8 pt-6 border-t border-slate-200 flex flex-wrap items-center justify-center gap-4">
+                    <button type="button" onclick="resetWizard()" class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-bold bg-nordic-800 hover:bg-nordic-700 text-white shadow-md transition cursor-pointer">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span data-i18n="resetFormBtn">Gör om formuläret</span>
+                    </button>
                 </div>
             </section>
 
@@ -893,8 +881,8 @@
         let currentStep = 0; // 0 = Start page, 1 = Estate/Civil status, 2 = Heirs, 3 = Will, 4 = Result
         let maritalStatus = 'married'; // 'single' | 'married' | 'sambo'
         let children = [
-            { id: 1, name: 'Barn 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 },
-            { id: 2, name: 'Barn 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 }
+            { id: 1, name: 'Barn 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 },
+            { id: 2, name: 'Barn 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 }
         ];
         let nextChildId = 3;
 
@@ -926,10 +914,8 @@
                 nextBtn: "Nästa",
                 showResultBtn: "Beräkna & Visa Resultat",
                 editAnswersBtn: "Ändra svar",
-                startOverBtn: "Gör om formuläret",
-                redoPromptTitle: "Vill du göra en ny arvsberäkning?",
-                redoPromptSub: "Du kan antingen gå tillbaka och justera dina nuvarande svar eller nollställa formuläret helt.",
-                redoFormBtnLarge: "Gör om formuläret från början",
+                startOverBtn: "Börja om",
+                resetFormBtn: "Gör om formuläret",
                 printResultBtn: "Skriv ut / Spara som PDF",
                 presetsLabel: "Eller testa ett färdigt typfall direkt:",
                 preset1: "Gift par med 2 gemensamma barn",
@@ -986,8 +972,8 @@
                 legatToggleTitle: "A. Specifikt belopp eller sak (Legat – 11 kap. 2 § ÄB)",
                 legatToggleDesc: "Används om testamentet ger en bestämd summa pengar (t.ex. 100 000 kr) eller en specifik sak innan resten av arvet fördelas.",
                 willLegatLabel: "Belopp för legat (SEK)",
-                universalToggleTitle: "B. Andel av återstående kvarlåtenskap (Universellt förordnande – 11 kap. 10 § ÄB)",
-                universalToggleDesc: "<strong>Vad innebär detta?</strong> Aktivera detta om testamentet anger att mottagaren ska erhålla en viss <em>kvotdel eller procentandel</em> (t.ex. 50 % eller hela återstoden) av den kvarlåtenskap som återstår sedan eventuella legat har skiftats ut.",
+                universalToggleTitle: "B. Procent av återstående kvarlåtenskap (Universellt förordnande – 11 kap. 10 § ÄB)",
+                universalToggleDesc: "<strong>Vad betyder detta?</strong> Aktivera detta om testamentet anger att mottagaren ska ärva en viss <em>procentandel</em> (t.ex. 50 % eller 100 %) av kvarlåtenskapen som återstår efter att eventuella legat har delats ut.",
                 willShareLabel: "Andel av återstående kvarlåtenskap:",
                 willHalfHint: "50 % (halva boet)",
                 willAllHint: "100 % (hela återstående boet)",
@@ -1020,10 +1006,10 @@
                 sarkullChildLabel: "Särkullbarn (endast den avlidnes barn)",
                 childAliveStatus: "I livet",
                 childDeceasedStatus: "Avliden (Barnbarn träder in)",
-                grandchildrenCountLabel: "Antal barnbarn i denna gren:",
-                deceasedGCToggleLink: "Varav avlidet barnbarn med egna barn (barnbarnsbarn)?",
-                deceasedGCCountLabel: "Antal avlidna barnbarn (med egna barn):",
-                greatGCCountLabel: "Antal barnbarnsbarn per avlidet barnbarn:",
+                grandchildrenCountLabel: "Totalt antal barnbarn i denna gren (levande + ev. avlidna):",
+                deceasedGCToggleLink: "Har något av dessa barnbarn avlidit?",
+                deceasedGCCountLabel: "Antal avlidna barnbarn i denna gren:",
+                greatGCPerBranchLabel: "Antal egna barn (barnbarnsbarn) för avlidet barnbarn",
                 waiveToSpouseLabel: "Avstår arv nu till förmån för efterlevande make (3 kap. 9 § ÄB - ger efterarvsrätt)",
                 advanceLabel: "Mottaget förskott på arv (6 kap. ÄB, SEK):",
                 removeChildTitle: "Ta bort barn",
@@ -1069,10 +1055,8 @@
                 nextBtn: "Next",
                 showResultBtn: "Calculate & View Results",
                 editAnswersBtn: "Edit Answers",
-                startOverBtn: "Redo Form",
-                redoPromptTitle: "Would you like to start a new calculation?",
-                redoPromptSub: "You can either go back and adjust your current answers or reset the form completely.",
-                redoFormBtnLarge: "Redo Form from the Beginning",
+                startOverBtn: "Start Over",
+                resetFormBtn: "Reset & Start Over",
                 printResultBtn: "Print / Save as PDF",
                 presetsLabel: "Or try a common scenario right away:",
                 preset1: "Married couple with 2 joint children",
@@ -1129,8 +1113,8 @@
                 legatToggleTitle: "A. Specific monetary amount or item (Legat – Ch. 11 Sec. 2 ÄB)",
                 legatToggleDesc: "Used if the will grants a fixed sum of money (e.g. 100,000 SEK) or specific item before the rest of the estate is divided.",
                 willLegatLabel: "Legacy amount (SEK)",
-                universalToggleTitle: "B. Share of remaining estate (Universellt förordnande – Ch. 11 Sec. 10 ÄB)",
-                universalToggleDesc: "<strong>What does this mean?</strong> Enable this if the will specifies that the beneficiary shall receive a <em>fractional share or percentage</em> (e.g. 50% or the entire remainder) of the estate remaining after any specific legacies have been distributed.",
+                universalToggleTitle: "B. Percentage of remaining estate (Universellt förordnande – Ch. 11 Sec. 10 ÄB)",
+                universalToggleDesc: "<strong>What does this mean?</strong> Enable this if the will states that the beneficiary receives a <em>percentage</em> (e.g. 50% or 100%) of the estate remaining after any fixed legacies have been paid out.",
                 willShareLabel: "Share of remaining estate:",
                 willHalfHint: "50% (half of remaining)",
                 willAllHint: "100% (entire remaining estate)",
@@ -1163,10 +1147,10 @@
                 sarkullChildLabel: "Separate child (Särkullbarn)",
                 childAliveStatus: "Alive",
                 childDeceasedStatus: "Deceased (Grandchildren step in)",
-                grandchildrenCountLabel: "Number of grandchildren in branch:",
-                deceasedGCToggleLink: "Any deceased grandchild with own children (great-grandchildren)?",
-                deceasedGCCountLabel: "Deceased grandchildren (with own children):",
-                greatGCCountLabel: "Great-grandchildren per deceased grandchild:",
+                grandchildrenCountLabel: "Total grandchildren in this branch (living + any deceased):",
+                deceasedGCToggleLink: "Has any of these grandchildren passed away?",
+                deceasedGCCountLabel: "Number of deceased grandchildren in this branch:",
+                greatGCPerBranchLabel: "Number of own children (great-grandchildren) for deceased grandchild",
                 waiveToSpouseLabel: "Waives immediate payout in favor of spouse (Ch. 3 Sec. 9 ÄB - grants efterarv)",
                 advanceLabel: "Advance on inheritance received (Ch. 6 ÄB, SEK):",
                 removeChildTitle: "Remove child",
@@ -1200,6 +1184,32 @@
             return (ratio * 100).toFixed(1).replace('.0', '') + ' %';
         }
 
+        // Helper to synchronize deceasedGCBranches array with deceasedGCCount
+        function syncDeceasedGCBranches(child) {
+            const count = Math.min(child.grandchildrenCount || 0, Math.max(0, child.deceasedGCCount || 0));
+            child.deceasedGCCount = count;
+            if (!Array.isArray(child.deceasedGCBranches)) {
+                child.deceasedGCBranches = [];
+            }
+            while (child.deceasedGCBranches.length < count) {
+                child.deceasedGCBranches.push(2);
+            }
+            if (child.deceasedGCBranches.length > count) {
+                child.deceasedGCBranches = child.deceasedGCBranches.slice(0, count);
+            }
+        }
+
+        // Helper to check if a child branch has at least one living descendant
+        function isChildBranchActive(child) {
+            if (!child.isDeceased) return true;
+            const totalGC = Math.max(0, child.grandchildrenCount || 0);
+            if (totalGC === 0) return false;
+            syncDeceasedGCBranches(child);
+            const aliveGC = totalGC - child.deceasedGCCount;
+            const activeDeceasedGCBranches = child.deceasedGCBranches.filter(cnt => cnt > 0).length;
+            return (aliveGC + activeDeceasedGCBranches) > 0;
+        }
+
         // ==========================================
         // 3. WIZARD NAVIGATION & UI HANDLERS
         // ==========================================
@@ -1207,7 +1217,7 @@
             goToStep(1);
         }
 
-        function resetAndRestartWizard() {
+        function resetWizard() {
             document.getElementById('estateValueInput').value = 1200000;
             document.getElementById('spousePropertyInput').value = 1200000;
             document.getElementById('pbbInput').value = 59200;
@@ -1218,19 +1228,17 @@
             document.getElementById('willUniversalPercent').value = 100;
             document.getElementById('willPercentDisplay').innerText = '100 %';
             document.getElementById('claimLaglottCheck').checked = true;
-
             children = [
-                { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 },
-                { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 }
+                { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 },
+                { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 }
             ];
             nextChildId = 3;
-
             setMaritalStatus('married');
             toggleWillSection();
             renderChildrenList();
             syncWillTargetOptions();
             recalculate();
-            goToStep(1);
+            goToStep(0);
         }
 
         function goToStep(stepNumber) {
@@ -1369,7 +1377,7 @@
                 grandchildrenCount: 2,
                 showDeceasedGC: false,
                 deceasedGCCount: 0,
-                greatGCCount: 2,
+                deceasedGCBranches: [],
                 waiveToSpouse: false,
                 advanceAmount: 0
             });
@@ -1395,7 +1403,16 @@
             } else if (!child.showDeceasedGC) {
                 child.deceasedGCCount = 0;
             }
+            syncDeceasedGCBranches(child);
             renderChildrenList();
+            recalculate();
+        }
+
+        function updateDeceasedGCBranchCount(childId, branchIdx, val) {
+            const child = children.find(c => Number(c.id) === Number(childId));
+            if (!child) return;
+            syncDeceasedGCBranches(child);
+            child.deceasedGCBranches[branchIdx] = Math.max(0, parseInt(val) || 0);
             recalculate();
         }
 
@@ -1404,18 +1421,12 @@
             if (!child) return;
             child[field] = value;
 
-            // Keep deceasedGCCount within total grandchildrenCount
-            if (field === 'grandchildrenCount' && child.deceasedGCCount > child.grandchildrenCount) {
-                child.deceasedGCCount = child.grandchildrenCount;
-            }
-            if (field === 'deceasedGCCount' && child.deceasedGCCount > child.grandchildrenCount) {
-                child.deceasedGCCount = child.grandchildrenCount;
-            }
+            syncDeceasedGCBranches(child);
 
-            if (field === 'isDeceased' || field === 'isJoint') {
+            if (field === 'isDeceased' || field === 'isJoint' || field === 'grandchildrenCount' || field === 'deceasedGCCount') {
                 renderChildrenList();
             }
-            if (field === 'name' || field === 'isDeceased') {
+            if (field === 'name' || field === 'isDeceased' || field === 'grandchildrenCount' || field === 'deceasedGCCount') {
                 syncWillTargetOptions();
             }
             recalculate();
@@ -1434,7 +1445,9 @@
                 return;
             }
 
-            container.innerHTML = children.map((child) => `
+            container.innerHTML = children.map((child) => {
+                syncDeceasedGCBranches(child);
+                return `
                 <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-3 transition-all-smooth">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div class="flex items-center gap-2 flex-grow sm:flex-grow-0">
@@ -1472,7 +1485,7 @@
                             <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-700">
                                 <span>↳ ${dict.grandchildrenCountLabel}</span>
                                 <input type="number" value="${child.grandchildrenCount}" min="0" max="20"
-                                    oninput="updateChildField(${child.id}, 'grandchildrenCount', Math.max(0, parseInt(this.value) || 0))"
+                                    onchange="updateChildField(${child.id}, 'grandchildrenCount', Math.max(0, parseInt(this.value) || 0))"
                                     class="w-20 bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-bold text-center">
                             </div>
 
@@ -1484,19 +1497,21 @@
                                     </button>
 
                                     ${child.showDeceasedGC ? `
-                                        <div class="mt-2 p-2.5 rounded-lg bg-white border border-slate-200 space-y-2 text-[11px] text-slate-600">
-                                            <div class="flex items-center justify-between gap-2">
-                                                <span>${dict.deceasedGCCountLabel}</span>
+                                        <div class="mt-2 p-3 rounded-lg bg-white border border-slate-200 space-y-2 text-[11px] text-slate-600">
+                                            <div class="flex items-center justify-between gap-2 pb-1.5 border-b border-slate-100">
+                                                <span class="font-semibold text-slate-700">${dict.deceasedGCCountLabel}</span>
                                                 <input type="number" value="${child.deceasedGCCount || 0}" min="0" max="${child.grandchildrenCount}"
-                                                    oninput="updateChildField(${child.id}, 'deceasedGCCount', Math.min(${child.grandchildrenCount}, Math.max(0, parseInt(this.value) || 0)))"
+                                                    onchange="updateChildField(${child.id}, 'deceasedGCCount', Math.min(${child.grandchildrenCount}, Math.max(0, parseInt(this.value) || 0)))"
                                                     class="w-16 bg-slate-50 border border-slate-300 rounded px-2 py-0.5 text-xs font-semibold text-center">
                                             </div>
-                                            <div class="flex items-center justify-between gap-2">
-                                                <span>${dict.greatGCCountLabel}</span>
-                                                <input type="number" value="${child.greatGCCount || 2}" min="1" max="20"
-                                                    oninput="updateChildField(${child.id}, 'greatGCCount', Math.max(1, parseInt(this.value) || 1))"
-                                                    class="w-16 bg-slate-50 border border-slate-300 rounded px-2 py-0.5 text-xs font-semibold text-center">
-                                            </div>
+                                            ${child.deceasedGCBranches.map((ggcCount, bIdx) => `
+                                                <div class="flex items-center justify-between gap-2 pl-2">
+                                                    <span>↳ ${dict.greatGCPerBranchLabel} #${bIdx + 1}:</span>
+                                                    <input type="number" value="${ggcCount}" min="0" max="20"
+                                                        oninput="updateDeceasedGCBranchCount(${child.id}, ${bIdx}, this.value)"
+                                                        class="w-16 bg-slate-50 border border-slate-300 rounded px-2 py-0.5 text-xs font-semibold text-center">
+                                                </div>
+                                            `).join('')}
                                         </div>
                                     ` : ''}
                                 </div>
@@ -1536,7 +1551,7 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
 
             lucide.createIcons();
         }
@@ -1558,23 +1573,23 @@
                 document.getElementById('estateValueInput').value = 1600000;
                 document.getElementById('spousePropertyInput').value = 1600000;
                 children = [
-                    { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 },
-                    { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 }
+                    { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 },
+                    { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 }
                 ];
                 setMaritalStatus('married');
             } else if (type === 'married_sarkull') {
                 document.getElementById('estateValueInput').value = 1500000;
                 document.getElementById('spousePropertyInput').value = 1500000;
                 children = [
-                    { id: 1, name: currentLang === 'sv' ? 'Särkullbarn 1' : 'Separate Child 1', isJoint: false, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 },
-                    { id: 2, name: currentLang === 'sv' ? 'Gemensamt barn 2' : 'Joint Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 }
+                    { id: 1, name: currentLang === 'sv' ? 'Särkullbarn 1' : 'Separate Child 1', isJoint: false, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 },
+                    { id: 2, name: currentLang === 'sv' ? 'Gemensamt barn 2' : 'Joint Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 }
                 ];
                 setMaritalStatus('married');
             } else if (type === 'sambo_will') {
                 document.getElementById('estateValueInput').value = 1000000;
                 children = [
-                    { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 },
-                    { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 }
+                    { id: 1, name: currentLang === 'sv' ? 'Barn 1' : 'Child 1', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 },
+                    { id: 2, name: currentLang === 'sv' ? 'Barn 2' : 'Child 2', isJoint: true, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 }
                 ];
                 document.getElementById('hasWillToggle').checked = true;
                 document.getElementById('enableUniversalCheck').checked = true;
@@ -1596,7 +1611,7 @@
                 document.getElementById('estateValueInput').value = 150000;
                 document.getElementById('spousePropertyInput').value = 50000;
                 children = [
-                    { id: 1, name: currentLang === 'sv' ? 'Särkullbarn' : 'Separate Child', isJoint: false, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, greatGCCount: 2, waiveToSpouse: false, advanceAmount: 0 }
+                    { id: 1, name: currentLang === 'sv' ? 'Särkullbarn' : 'Separate Child', isJoint: false, isDeceased: false, grandchildrenCount: 2, showDeceasedGC: false, deceasedGCCount: 0, deceasedGCBranches: [], waiveToSpouse: false, advanceAmount: 0 }
                 ];
                 setMaritalStatus('married');
             }
@@ -1608,24 +1623,50 @@
             goToStep(4);
         }
 
-        // Helper to build branch subNote for deceased child (including deceased grandchildren -> great-grandchildren)
+        // Helper to build branch subNote for deceased child (including individual deceased grandchildren -> great-grandchildren)
         function buildDescendantBranchNote(child, branchAmount) {
             if (!child.isDeceased || child.grandchildrenCount <= 0) return "";
+            syncDeceasedGCBranches(child);
             const totalGC = child.grandchildrenCount;
-            const decGC = Math.min(totalGC, Math.max(0, child.deceasedGCCount || 0));
+            const decGC = child.deceasedGCCount;
             const aliveGC = totalGC - decGC;
-            const ggcPerDec = Math.max(1, child.greatGCCount || 1);
-            const perGCBranch = branchAmount / totalGC;
+
+            // Only grandchildren who are alive OR have >0 living children take a sub-branch (2 kap. 1 § ÄB)
+            const activeDecBranches = child.deceasedGCBranches
+                .map((ggcCount, idx) => ({ idx: idx + 1, ggcCount }))
+                .filter(b => b.ggcCount > 0);
+            const effectiveSubBranches = aliveGC + activeDecBranches.length;
+
+            if (effectiveSubBranches === 0) return "";
+            const perSubBranch = branchAmount / effectiveSubBranches;
 
             if (decGC === 0) {
                 return currentLang === 'sv'
-                    ? `Istadarätt (2 kap. 1 § 2 st. ÄB): ${child.name} är avliden. ${totalGC} barnbarn träder in och delar lika (${formatSEK(perGCBranch)} var).`
-                    : `Right of representation (Ch. 2 Sec. 1 ÄB): ${child.name} is deceased. ${totalGC} grandchildren step in and split equally (${formatSEK(perGCBranch)} each).`;
+                    ? `Istadarätt (2 kap. 1 § 2 st. ÄB): ${child.name} är avliden. ${totalGC} barnbarn träder in och delar lika (${formatSEK(perSubBranch)} var).`
+                    : `Right of representation (Ch. 2 Sec. 1 ÄB): ${child.name} is deceased. ${totalGC} grandchildren step in and split equally (${formatSEK(perSubBranch)} each).`;
             } else {
-                const perGGC = perGCBranch / ggcPerDec;
+                const details = [];
+                if (aliveGC > 0) {
+                    details.push(currentLang === 'sv'
+                        ? `${aliveGC} levande barnbarn får ${formatSEK(perSubBranch)} var`
+                        : `${aliveGC} living grandchild(ren) receive ${formatSEK(perSubBranch)} each`);
+                }
+                activeDecBranches.forEach(b => {
+                    const perGGC = perSubBranch / b.ggcCount;
+                    details.push(currentLang === 'sv'
+                        ? `Avlidet barnbarn #${b.idx}:s ${b.ggcCount} barnbarnsbarn delar på ${formatSEK(perSubBranch)} (${formatSEK(perGGC)} var)`
+                        : `Deceased grandchild #${b.idx}'s ${b.ggcCount} great-grandchildren split ${formatSEK(perSubBranch)} (${formatSEK(perGGC)} each)`);
+                });
+                const lapsedCount = decGC - activeDecBranches.length;
+                if (lapsedCount > 0) {
+                    details.push(currentLang === 'sv'
+                        ? `(${lapsedCount} avlidet barnbarn utan egna barn utgår så dess andel tillfaller övriga grenar inom ${child.name}s lott)`
+                        : `(${lapsedCount} deceased grandchild without issue lapses to remaining sub-branches)`);
+                }
+
                 return currentLang === 'sv'
-                    ? `Istadarätt i flera led (2 kap. 1 § ÄB): ${child.name} är avliden (${totalGC} barnbarnsgrenar à ${formatSEK(perGCBranch)}). ${aliveGC > 0 ? `${aliveGC} levande barnbarn får ${formatSEK(perGCBranch)} var. ` : ''}För ${decGC} avlidet barnbarn träder ${ggcPerDec} barnbarnsbarn in och får ${formatSEK(perGGC)} var.`
-                    : `Multi-generational representation (Ch. 2 Sec. 1 ÄB): ${child.name} is deceased (${totalGC} grandchild branches of ${formatSEK(perGCBranch)}). ${aliveGC > 0 ? `${aliveGC} living grandchildren receive ${formatSEK(perGCBranch)} each. ` : ''}For ${decGC} deceased grandchild(ren), ${ggcPerDec} great-grandchildren step in and receive ${formatSEK(perGGC)} each.`;
+                    ? `Istadarätt i flera led (2 kap. 1 § ÄB): ${child.name}s gren (${formatSEK(branchAmount)}) fördelas på ${effectiveSubBranches} aktiva barnbarnsgrenar: ` + details.join('; ') + '.'
+                    : `Multi-generational representation (Ch. 2 Sec. 1 ÄB): ${child.name}'s branch (${formatSEK(branchAmount)}) is divided among ${effectiveSubBranches} active grandchild branches: ` + details.join('; ') + '.';
             }
         }
 
@@ -1644,8 +1685,8 @@
                 dateStampEl.innerText = new Date().toLocaleDateString(currentLang === 'sv' ? 'sv-SE' : 'en-US');
             }
 
-            // Filter active 1st class branches (alive child OR deceased child with >= 1 grandchild)
-            const activeChildren = children.filter(c => !c.isDeceased || (c.isDeceased && c.grandchildrenCount > 0));
+            // Filter active 1st class branches (alive child OR deceased child with >= 1 living grandchild or great-grandchild)
+            const activeChildren = children.filter(c => isChildBranchActive(c));
             const hasFirstClass = activeChildren.length > 0;
 
             // Toggle visibility of 2nd and 3rd class forms
@@ -1673,31 +1714,32 @@
                 willTargetChild = children.find(c => Number(c.id) === targetId) || null;
             }
 
-            // Determine if testament lapses because it was directed to a deceased child with 0 descendants (11 kap. 6–7 §§ ÄB)
+            // Determine if testament lapses because it was directed to a deceased child with 0 living descendants (11 kap. 6–7 §§ ÄB)
             let willLapsedNoDescendants = false;
             let willSubstitutedByGrandchildren = false;
             let willDisplayBeneficiary = document.getElementById('willBeneficiaryName').value.trim() || 'Testamentstagare';
 
             const noticeEl = document.getElementById('willDeceasedChildNotice');
             if (hasWill && willTargetChild) {
+                const branchActive = isChildBranchActive(willTargetChild);
                 if (!willTargetChild.isDeceased) {
-                    willDisplayBeneficiary = `${willTargetChild.name} (${currentLang === 'sv' ? 'Utöver/via testamente' : 'Via will'})`;
+                    willDisplayBeneficiary = willTargetChild.name;
                     noticeEl.classList.add('hidden');
-                } else if (willTargetChild.grandchildrenCount > 0) {
+                } else if (branchActive) {
                     willSubstitutedByGrandchildren = true;
                     willDisplayBeneficiary = currentLang === 'sv'
-                        ? `Avkomlingar till avlidna ${willTargetChild.name} (${willTargetChild.grandchildrenCount} barnbarn)`
-                        : `Descendants of deceased ${willTargetChild.name} (${willTargetChild.grandchildrenCount} grandchildren)`;
+                        ? `Avkomlingar till avlidna ${willTargetChild.name}`
+                        : `Descendants of deceased ${willTargetChild.name}`;
                     noticeEl.classList.remove('hidden');
                     noticeEl.innerHTML = currentLang === 'sv'
-                        ? `<strong>11 kap. 6 § ÄB (Istadarätt vid testamente):</strong> Eftersom <strong>${willTargetChild.name}</strong> är avliden utbetalas inget till den avlidne. Istället träder ${willTargetChild.name}s <strong>${willTargetChild.grandchildrenCount} barnbarn</strong> automatiskt in i ${willTargetChild.name}s ställe som testamentstagare.`
-                        : `<strong>Ch. 11 Sec. 6 ÄB (Substitution in wills):</strong> Because <strong>${willTargetChild.name}</strong> is deceased, nothing is paid to the deceased. Instead, ${willTargetChild.name}'s <strong>${willTargetChild.grandchildrenCount} grandchildren</strong> automatically step into their place as beneficiaries under the will.`;
+                        ? `<strong>11 kap. 6 § ÄB (Istadarätt vid testamente):</strong> Eftersom <strong>${willTargetChild.name}</strong> är avliden utbetalas inget till den avlidne. Istället träder ${willTargetChild.name}s levande avkomlingar (barnbarn/barnbarnsbarn) automatiskt in i ${willTargetChild.name}s ställe.`
+                        : `<strong>Ch. 11 Sec. 6 ÄB (Substitution in wills):</strong> Because <strong>${willTargetChild.name}</strong> is deceased, nothing is paid to the deceased. Instead, ${willTargetChild.name}'s living descendants automatically step into their place.`;
                 } else {
                     willLapsedNoDescendants = true;
                     noticeEl.classList.remove('hidden');
                     noticeEl.innerHTML = currentLang === 'sv'
-                        ? `<strong>11 kap. 6–7 §§ ÄB (Förfallet testamentsförordnande):</strong> Eftersom <strong>${willTargetChild.name}</strong> är avliden och saknar egna barn (0 barnbarn) kan testamentet till denne inte verkställas. Förordnandet <strong>förfaller</strong> därför och kvarlåtenskapen fördelas istället till övriga arvingar enligt lag.`
-                        : `<strong>Ch. 11 Sec. 6–7 ÄB (Lapsed bequest):</strong> Because <strong>${willTargetChild.name}</strong> is deceased and has no living descendants (0 grandchildren), the bequest cannot be executed and <strong>lapses</strong>. The estate is distributed to the remaining legal heirs.`;
+                        ? `<strong>11 kap. 6–7 §§ ÄB (Förfallet testamentsförordnande):</strong> Eftersom <strong>${willTargetChild.name}</strong> är avliden och saknar levande avkomlingar kan testamentet till denne inte verkställas. Förordnandet <strong>förfaller</strong> därför och kvarlåtenskapen fördelas istället till övriga arvingar enligt lag.`
+                        : `<strong>Ch. 11 Sec. 6–7 ÄB (Lapsed bequest):</strong> Because <strong>${willTargetChild.name}</strong> is deceased and has no living descendants, the bequest cannot be executed and <strong>lapses</strong>. The estate is distributed to the remaining legal heirs.`;
                 }
             } else if (noticeEl) {
                 noticeEl.classList.add('hidden');
@@ -1750,79 +1792,114 @@
 
                 const childArvslotter = rawNetShares.map(val => sumRawNet > 0 ? (val / sumRawNet) * estateValue : estateValue / n);
                 const childLaglotter = childArvslotter.map(val => val * 0.5);
+                const totalArvslottSum = childArvslotter.reduce((a, b) => a + b, 0);
 
                 let spouseTotalNow = 0;
-                let willTotalPayout = 0;
+                let externalWillPayout = 0;
+                let childAddedFromWill = new Array(n).fill(0);
+                let childStatutoryPortion = new Array(n).fill(0);
 
                 if (hasActiveWillProvision && estateValue > 0) {
-                    // Under 7 kap. 2 § ÄB, a child who is also the testament beneficiary counts their testament gift toward their laglott.
-                    // Other children who are NOT the testament beneficiary still have their laglott protected (7 kap. 1 & 3 §§ ÄB).
-                    const protectedLaglottOfOtherChildren = claimLaglott
-                        ? activeChildren.reduce((acc, c, idx) => {
-                            if (willTargetChild && Number(c.id) === Number(willTargetChild.id)) return acc;
-                            return acc + childLaglotter[idx];
-                        }, 0)
-                        : 0;
-
-                    const maxAvailableForWill = Math.max(0, estateValue - Math.max(spouseMandatoryMinFromEstate, protectedLaglottOfOtherChildren));
                     const desiredWillAmount = Math.min(estateValue, willLegat + Math.max(0, estateValue - willLegat) * willPercent);
-                    willTotalPayout = Math.min(desiredWillAmount, maxAvailableForWill);
+                    const undisposedEstate = Math.max(0, estateValue - desiredWillAmount);
 
-                    if (desiredWillAmount > maxAvailableForWill && claimLaglott) {
-                        mainRuleCitation = "7 kap. 1 & 3 §§ ÄB (Jämkning av testamente)";
+                    // Each child receives their statutory share of the undisposed estate
+                    const baseStatutoryFromUndisposed = activeChildren.map((c, idx) =>
+                        totalArvslottSum > 0 ? (childArvslotter[idx] / totalArvslottSum) * undisposedEstate : undisposedEstate / n
+                    );
+
+                    // Under 7 kap. 1–3 §§ ÄB:
+                    // Any child (other than the testament beneficiary, 7 kap. 2 § ÄB) is entitled to at least their laglott (50% of arvslott).
+                    // If baseStatutoryFromUndisposed[idx] < childLaglotter[idx], the shortfall is taken from the will (jämkning av testamente).
+                    let totalJamkningForLaglott = 0;
+                    activeChildren.forEach((c, idx) => {
+                        const isTarget = willTargetChild && Number(c.id) === Number(willTargetChild.id);
+                        if (claimLaglott && !isTarget) {
+                            const shortfall = Math.max(0, childLaglotter[idx] - baseStatutoryFromUndisposed[idx]);
+                            childStatutoryPortion[idx] = baseStatutoryFromUndisposed[idx] + shortfall;
+                            totalJamkningForLaglott += shortfall;
+                        } else {
+                            childStatutoryPortion[idx] = baseStatutoryFromUndisposed[idx];
+                        }
+                    });
+
+                    // Also ensure total available for will + children respects spouse's basbeloppsregel (3 kap. 1 § 2 st. ÄB)
+                    const maxWillAfterLaglottAndBasbelopp = Math.max(
+                        0,
+                        estateValue - Math.max(spouseMandatoryMinFromEstate, childStatutoryPortion.reduce((a, b) => a + b, 0))
+                    );
+                    const effectiveWillPayout = Math.min(desiredWillAmount, maxWillAfterLaglottAndBasbelopp);
+
+                    if (totalJamkningForLaglott > 0 && claimLaglott) {
+                        mainRuleCitation = "7 kap. 1 & 3 §§ ÄB (Jämkning för laglott)";
                     }
+
+                    if (willTargetChild) {
+                        const targetIdx = activeChildren.findIndex(c => Number(c.id) === Number(willTargetChild.id));
+                        if (targetIdx !== -1) {
+                            childAddedFromWill[targetIdx] = effectiveWillPayout;
+                        }
+                    } else {
+                        externalWillPayout = effectiveWillPayout;
+                    }
+                } else {
+                    activeChildren.forEach((c, idx) => {
+                        childStatutoryPortion[idx] = childArvslotter[idx];
+                    });
                 }
 
-                const estateForHeirs = Math.max(0, estateValue - willTotalPayout);
                 let childrenPayoutsNow = new Array(n).fill(0);
 
-                // If willTotalPayout went to an external person or a specific child, how is estateForHeirs divided among statutory heirs?
-                // If Laglott jämkning was triggered, children whose laglott was infringed get their laglott, otherwise proportional to arvslott:
-                const totalArvslottSum = childArvslotter.reduce((a, b) => a + b, 0);
                 activeChildren.forEach((child, idx) => {
-                    const shareOfRemaining = totalArvslottSum > 0 ? (childArvslotter[idx] / totalArvslottSum) * estateForHeirs : estateForHeirs / n;
+                    const statutoryPart = childStatutoryPortion[idx];
+                    const willPart = childAddedFromWill[idx];
 
+                    // Note: Under 7 kap. 3 § 2 st. ÄB, what a child receives via will (or laglott jämkning against a third-party will) is paid out according to the will/rule,
+                    // while the statutory inheritance portion of a joint child goes to the surviving spouse (3 kap. 1 § ÄB).
                     if (maritalStatus === 'married') {
                         if (child.isJoint) {
-                            spouseTotalNow += shareOfRemaining;
-                            efterarvItems.push({
-                                name: child.isDeceased ? `${child.name}s gren (${child.grandchildrenCount} barnbarn)` : child.name,
-                                amount: shareOfRemaining,
-                                citation: "3 kap. 1 & 2 §§ ÄB",
-                                type: currentLang === 'sv' ? "Gemensam bröstarvinge (Efterarv)" : "Joint descendant (Delayed inheritance)"
-                            });
+                            spouseTotalNow += statutoryPart;
+                            if (statutoryPart > 0) {
+                                efterarvItems.push({
+                                    name: child.isDeceased ? `${child.name}s gren` : child.name,
+                                    amount: statutoryPart,
+                                    citation: "3 kap. 1 & 2 §§ ÄB",
+                                    type: currentLang === 'sv' ? "Gemensam bröstarvinge (Efterarv)" : "Joint descendant (Delayed inheritance)"
+                                });
+                            }
+                            childrenPayoutsNow[idx] = willPart;
                         } else if (child.waiveToSpouse) {
-                            spouseTotalNow += shareOfRemaining;
+                            spouseTotalNow += (statutoryPart + willPart);
                             efterarvItems.push({
-                                name: child.isDeceased ? `${child.name}s gren (${child.grandchildrenCount} barnbarn)` : child.name,
-                                amount: shareOfRemaining,
+                                name: child.isDeceased ? `${child.name}s gren` : child.name,
+                                amount: statutoryPart + willPart,
                                 citation: "3 kap. 9 § & 2 § ÄB",
                                 type: currentLang === 'sv' ? "Särkullbarn som avstått till förmån för make" : "Separate child waiving in favor of spouse"
                             });
                         } else {
-                            childrenPayoutsNow[idx] = shareOfRemaining;
+                            childrenPayoutsNow[idx] = statutoryPart + willPart;
                         }
                     } else {
-                        childrenPayoutsNow[idx] = shareOfRemaining;
+                        childrenPayoutsNow[idx] = statutoryPart + willPart;
                     }
                 });
 
-                // Enforce Basbeloppsregeln (3 kap. 1 § 2 st. ÄB) against särkullbarn's immediate payouts if needed
+                // Enforce Basbeloppsregeln (3 kap. 1 § 2 st. ÄB) against immediate payouts if needed
                 if (maritalStatus === 'married' && spouseTotalNow < spouseMandatoryMinFromEstate) {
                     const deficit = spouseMandatoryMinFromEstate - spouseTotalNow;
-                    const totalSarkullNow = childrenPayoutsNow.reduce((a, b) => a + b, 0);
-                    if (totalSarkullNow > 0) {
-                        const reductionRatio = Math.min(1, deficit / totalSarkullNow);
+                    const totalChildrenNow = childrenPayoutsNow.reduce((a, b) => a + b, 0);
+                    if (totalChildrenNow > 0) {
+                        const reductionRatio = Math.min(1, deficit / totalChildrenNow);
                         activeChildren.forEach((child, idx) => {
                             if (childrenPayoutsNow[idx] > 0) {
                                 const takenByBasbelopp = childrenPayoutsNow[idx] * reductionRatio;
                                 childrenPayoutsNow[idx] -= takenByBasbelopp;
                                 spouseTotalNow += takenByBasbelopp;
                                 efterarvItems.push({
-                                    name: child.isDeceased ? `${child.name}s gren (${child.grandchildrenCount} barnbarn)` : child.name,
+                                    name: child.isDeceased ? `${child.name}s gren` : child.name,
                                     amount: takenByBasbelopp,
                                     citation: "3 kap. 1 § 2 st. & 2 § ÄB",
-                                    type: currentLang === 'sv' ? "Särkullbarn (Efterarv p.g.a. basbeloppsregeln)" : "Separate child (Delayed due to Base Amount Rule)"
+                                    type: currentLang === 'sv' ? "Bröstarvinge (Efterarv p.g.a. basbeloppsregeln)" : "Descendant (Delayed due to Base Amount Rule)"
                                 });
                             }
                         });
@@ -1846,26 +1923,37 @@
                     });
                 }
 
-                // Add Child / Grandchild Branch Cards
+                // Add Child / Grandchild Branch Cards (Merging any testament share into the child's own card!)
                 const childColors = ["#0d9488", "#0284c7", "#4f46e5", "#7c3aed", "#db2777", "#ea580c"];
                 activeChildren.forEach((child, idx) => {
                     const immediate = childrenPayoutsNow[idx];
-                    // Never show a deceased person as the recipient: if deceased, title the card with the living descendants!
+                    const willPart = childAddedFromWill[idx];
+                    const statutoryPart = childStatutoryPortion[idx];
+                    const isWillTarget = willPart > 0;
+
                     const cardTitle = child.isDeceased
                         ? (currentLang === 'sv'
-                            ? `Barnbarn efter avlidna ${child.name} (${child.grandchildrenCount} st)`
-                            : `Grandchildren of deceased ${child.name} (${child.grandchildrenCount})`)
+                            ? `Avkomlingar till avlidna ${child.name}`
+                            : `Descendants of deceased ${child.name}`)
                         : child.name;
 
                     let expText = "";
-                    if (maritalStatus === 'married' && child.isJoint && immediate === 0) {
+                    if (isWillTarget) {
                         expText = currentLang === 'sv'
-                            ? `Som gemensam bröstarvinge går grenens arvslott (${formatSEK(childArvslotter[idx])}) först till den efterlevande maken (3 kap. 1 § ÄB), och utbetalas som efterarv när båda makarna avlidit (3 kap. 2 § ÄB).`
-                            : `As a joint descendant, this branch's statutory share (${formatSEK(childArvslotter[idx])}) goes first to the surviving spouse (Ch. 3 Sec. 1 ÄB), with delayed inheritance (efterarv) when both spouses have passed away (Ch. 3 Sec. 2 ÄB).`;
+                            ? `Totalt belopp inkluderar både arv enligt lag (${formatSEK(maritalStatus === 'married' && child.isJoint ? 0 : statutoryPart)}) och testamentsförordnande (${formatSEK(willPart)}) enligt 2 kap. 1 § & 9–11 kap. ÄB.${child.isDeceased ? ' Enligt 11 kap. 6 § ÄB träder avkomlingarna in i det avlidna barnets ställe.' : ''}`
+                            : `Total amount combines statutory inheritance (${formatSEK(maritalStatus === 'married' && child.isJoint ? 0 : statutoryPart)}) and bequest under the will (${formatSEK(willPart)}) under Ch. 2 Sec. 1 & Ch. 9–11 ÄB.`;
+                    } else if (maritalStatus === 'married' && child.isJoint && immediate === 0) {
+                        expText = currentLang === 'sv'
+                            ? `Som gemensam bröstarvinge går grenens lott (${formatSEK(statutoryPart)}) först till den efterlevande maken (3 kap. 1 § ÄB), och utbetalas som efterarv när båda makarna avlidit (3 kap. 2 § ÄB).`
+                            : `As a joint descendant, this branch's share (${formatSEK(statutoryPart)}) goes first to the surviving spouse (Ch. 3 Sec. 1 ÄB), with delayed inheritance (efterarv) when both spouses have passed away (Ch. 3 Sec. 2 ÄB).`;
+                    } else if (hasActiveWillProvision && claimLaglott && Math.abs(immediate - childLaglotter[idx]) < 1) {
+                        expText = currentLang === 'sv'
+                            ? `Erhåller sin lagstadgade laglott (50 % av arvslotten, dvs. ${formatPercent(childLaglotter[idx] / estateValue)}) genom jämkning av testamente enligt 7 kap. 1 & 3 §§ ÄB.`
+                            : `Receives their protected statutory share / laglott (50% of arvslott, i.e. ${formatPercent(childLaglotter[idx] / estateValue)}) under Ch. 7 Sec. 1 & 3 ÄB.`;
                     } else if (maritalStatus === 'married' && !child.isJoint && !child.waiveToSpouse) {
                         expText = currentLang === 'sv'
-                            ? `Särkullbarnsgren har rätt att få ut sitt arv direkt vid dödsfallet enligt 3 kap. 1 § 1 st. ÄB.${hasActiveWillProvision && claimLaglott ? ' Eftersom testamente finns utgår minst den skyddade laglotten (7 kap. 1 § ÄB).' : ''}`
-                            : `Separate child branch has the right to receive their inheritance immediately upon death under Ch. 3 Sec. 1 ÄB.${hasActiveWillProvision && claimLaglott ? ' Due to the will, at least the protected laglott is paid out (Ch. 7 Sec. 1 ÄB).' : ''}`;
+                            ? `Särkullbarnsgren har rätt att få ut sitt arv direkt vid dödsfallet enligt 3 kap. 1 § 1 st. ÄB.`
+                            : `Separate child branch has the right to receive their inheritance immediately upon death under Ch. 3 Sec. 1 ÄB.`;
                     } else {
                         expText = currentLang === 'sv'
                             ? `Bröstarvinge i första arvsklassen (2 kap. 1 § ÄB).${child.advanceAmount > 0 ? ' Hänsyn har tagits till mottaget förskott på arv om ' + formatSEK(child.advanceAmount) + ' enligt 6 kap. 1 & 5 §§ ÄB.' : ''}`
@@ -1874,38 +1962,39 @@
 
                     const subNote = buildDescendantBranchNote(child, immediate);
 
+                    let roleText = child.isJoint && maritalStatus === 'married'
+                        ? dict.jointChildLabel
+                        : (!child.isJoint && maritalStatus === 'married' ? dict.sarkullChildLabel : (currentLang === 'sv' ? 'Första arvsklassen (Bröstarvinge)' : '1st Inheritance Class'));
+                    if (isWillTarget) {
+                        roleText += currentLang === 'sv' ? ' + Testamentstagare' : ' + Will Beneficiary';
+                    }
+
                     payouts.push({
                         name: cardTitle,
-                        role: child.isJoint && maritalStatus === 'married' ? dict.jointChildLabel : (!child.isJoint && maritalStatus === 'married' ? dict.sarkullChildLabel : (currentLang === 'sv' ? 'Första arvsklassen (Bröstarvinge)' : '1st Inheritance Class')),
+                        role: roleText,
                         amountNow: immediate,
                         arvslott: childArvslotter[idx],
                         laglott: childLaglotter[idx],
-                        citation: hasActiveWillProvision && claimLaglott ? "2 kap. 1 § & 7 kap. 1 § ÄB" : "2 kap. 1 § ÄB",
+                        citation: isWillTarget ? "2 kap. 1 § & 9–11 kap. ÄB" : (hasActiveWillProvision && claimLaglott ? "2 kap. 1 § & 7 kap. 1 § ÄB" : "2 kap. 1 § ÄB"),
                         explanation: expText,
                         subNote: subNote,
                         color: childColors[idx % childColors.length]
                     });
                 });
 
-                // Add Will Beneficiary Card if Will receives > 0
-                if (hasActiveWillProvision && willTotalPayout > 0) {
-                    let willSubNote = "";
-                    if (willSubstitutedByGrandchildren && willTargetChild) {
-                        willSubNote = buildDescendantBranchNote(willTargetChild, willTotalPayout);
-                    }
+                // Add External Will Beneficiary Card ONLY if recipient is external (not a child already in the list)
+                if (hasActiveWillProvision && !willTargetChild && externalWillPayout > 0) {
                     payouts.push({
                         name: willDisplayBeneficiary,
-                        role: willSubstitutedByGrandchildren
-                            ? (currentLang === 'sv' ? `Träder i ${willTargetChild.name}s ställe (11 kap. 6 § ÄB)` : `Stepping into ${willTargetChild.name}'s place (Ch. 11 Sec. 6 ÄB)`)
-                            : (currentLang === 'sv' ? "Testamentstagare" : "Will Beneficiary"),
-                        amountNow: willTotalPayout,
+                        role: currentLang === 'sv' ? "Testamentstagare" : "Will Beneficiary",
+                        amountNow: externalWillPayout,
                         arvslott: null,
                         laglott: null,
-                        citation: willSubstitutedByGrandchildren ? "11 kap. 6 § & 7 kap. 3 § ÄB" : (claimLaglott ? "9 kap. 1 § & 7 kap. 3 § ÄB" : "9 kap. 1 § & 11 kap. ÄB"),
+                        citation: claimLaglott ? "9 kap. 1 § & 7 kap. 3 § ÄB" : "9 kap. 1 § & 11 kap. ÄB",
                         explanation: currentLang === 'sv'
-                            ? `${willSubstitutedByGrandchildren ? `Enligt 11 kap. 6 § ÄB träder avkomlingarna (barnbarnen) in i den avlidne testamentstagarens (${willTargetChild.name}s) ställe. ` : 'Utgår enligt testamente. '}${claimLaglott ? 'Beloppet har anpassats så att det inte inkräktar på övriga bröstarvingars laglotter (7 kap. 1 & 3 §§ ÄB)' + (basbeloppTriggered ? ' eller makens basbeloppsskydd.' : '.') : ''}`
-                            : `${willSubstitutedByGrandchildren ? `Under Ch. 11 Sec. 6 ÄB, the descendants step into the deceased beneficiary's (${willTargetChild.name}'s) place. ` : 'Paid according to the will. '}${claimLaglott ? 'Capped so as not to infringe upon other direct descendants\' laglott (Ch. 7 Sec. 1 & 3 ÄB).' : ''}`,
-                        subNote: willSubNote,
+                            ? `Utgår enligt testamente. ${claimLaglott ? 'Beloppet har anpassats så att det inte inkräktar på bröstarvingarnas laglotter (7 kap. 1 & 3 §§ ÄB)' + (basbeloppTriggered ? ' eller makens basbeloppsskydd.' : '.') : ''}`
+                            : `Paid according to the will. ${claimLaglott ? 'Capped so as not to infringe upon direct descendants\' laglott (Ch. 7 Sec. 1 & 3 ÄB).' : ''}`,
+                        subNote: "",
                         color: "#c59b27"
                     });
                 }
